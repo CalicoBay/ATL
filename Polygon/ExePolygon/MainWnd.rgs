@@ -1,0 +1,15 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {E700F48F-0CF1-4C1A-B531-2E9967D75BBD} = s 'MainWnd Class'
+		{
+			LocalServer32 = s '%MODULE%'
+			{
+				val ServerExecutable = s '%MODULE_RAW%'
+			}
+			TypeLib = s '{75E97DF7-C654-4C33-9C4E-0632BC2CFDC0}'
+			Version = s '1.0'
+		}
+	}
+}

@@ -1,0 +1,25 @@
+HKCR
+{
+	PolygonLib.PolyProp.1 = s 'PolyProp Class'
+	{
+		CLSID = s '{BDEBD4AE-68F5-4A16-AFA5-954C811D6B69}'
+	}
+	PolygonLib.PolyProp = s 'PolyProp Class'
+	{		
+		CurVer = s 'PolygonLib.PolyProp.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {BDEBD4AE-68F5-4A16-AFA5-954C811D6B69} = s 'PolyProp Class'
+		{
+			ProgID = s 'PolygonLib.PolyProp.1'
+			VersionIndependentProgID = s 'PolygonLib.PolyProp'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{6A1A47C2-6E64-4429-980A-2A9987CE6643}'
+			Version = s '1.0'
+		}
+	}
+}
