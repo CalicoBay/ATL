@@ -1,0 +1,42 @@
+// ExePolygon.idl : IDL source for ExePolygon
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (ExePolygon.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(9156F305-B0AB-40B2-96C3-985F2A670B61),
+	pointer_default(unique)
+]
+interface IMainWnd : IUnknown{
+	[, helpstring("method Create() the Main Window")] HRESULT CreateMain([in] HWND hWndParent, [in] RECT rect, LPCTSTR szWindowName, [in] DWORD dwStyle, [in] DWORD dwExStyle, [in] HMENU MenuOrID, [in] LPARAM lpCreateParam);
+};
+[
+	uuid(75E97DF7-C654-4C33-9C4E-0632BC2CFDC0),
+	version(1.0),
+]
+library ExePolygonLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(6D991963-AC6E-41D5-94CF-273E94379A33)		
+	]
+	dispinterface _IMainWndEvents
+	{
+		properties:
+		methods:
+	};
+	[
+		uuid(E700F48F-0CF1-4C1A-B531-2E9967D75BBD)		
+	]
+	coclass MainWnd
+	{
+		[default] interface IMainWnd;
+		[default, source] dispinterface _IMainWndEvents;
+	};
+};
+

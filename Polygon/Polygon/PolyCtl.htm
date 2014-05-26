@@ -1,0 +1,31 @@
+<HTML>
+<HEAD>
+<TITLE>ATL test page for object PolyCtl</TITLE>
+</HEAD>
+<BODY>
+    <script language="JavaScript">
+    function PolyCtl_ClickIn(x, y) {
+        PolyCtl.Sides = PolyCtl.Sides + 1
+        var msg1 = "This is from ClickIn"
+        alert(msg1)
+    }
+    function PolyCtl_ClickOut(x, y) {
+        PolyCtl.Sides = PolyCtl.Sides - 1
+        var msg2 = "This is from ClickOut"
+        alert(msg2)
+    }
+    </script>
+
+
+    <center><object id="PolyCtl" classid="CLSID:62F10F30-E30A-4C4C-9F1E-97D744A5E205"></object></center>
+    <form name="frmScript">
+        <input type="TEXT" name="txtMessage" value="Test">
+        <p>
+            <input type="BUTTON" value="Less Sides"
+                   name="ClickOut" onclick="PolyCtl_ClickOut(100, 100)">
+        <p>
+            <input type="BUTTON" value="More Sides"
+                   name="ClickIn" onclick="PolyCtl_ClickIn(10, 10)">
+    </form>
+</BODY>
+</HTML>
