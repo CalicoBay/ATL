@@ -4,15 +4,11 @@
 </HEAD>
 <BODY>
     <script language="JavaScript">
-    function PolyCtl_ClickIn(x, y) {
+    function PolyCtl_ClickIn() {
         PolyCtl.Sides = PolyCtl.Sides + 1
-        var msg1 = "This is from ClickIn"
-        alert(msg1)
     }
-    function PolyCtl_ClickOut(x, y) {
+    function PolyCtl_ClickOut() {
         PolyCtl.Sides = PolyCtl.Sides - 1
-        var msg2 = "This is from ClickOut"
-        alert(msg2)
     }
     </script>
 
@@ -22,10 +18,10 @@
         <input type="TEXT" name="txtMessage" value="Test">
         <p>
             <input type="BUTTON" value="Less Sides"
-                   name="ClickOut" onclick="PolyCtl_ClickOut(100, 100)">
+                   name="ClickOut" onclick="PolyCtl_ClickOut()">
         <p>
             <input type="BUTTON" value="More Sides"
-                   name="ClickIn" onclick="PolyCtl_ClickIn(10, 10)">
+                   name="ClickIn" onclick="PolyCtl_ClickIn()">
     </form>
 </BODY>
 </HTML>

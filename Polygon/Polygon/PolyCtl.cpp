@@ -24,7 +24,8 @@ STDMETHODIMP CPolyCtl::put_Sides(SHORT newVal)
 	}
 	else
 	{
-		return Error(_T("Shape must have between 3 and 100 sides"));
+      m_nSides = 4;
+      return Error(_T("Shape must have between 3 and 100 sides, setting 4"));
 	}
 
 	return S_OK;
