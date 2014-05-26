@@ -40,6 +40,11 @@ public:
 	DECLARE_WND_CLASS(_T("CMAINWND"))
 	BEGIN_MSG_MAP(CMainWnd)
 	END_MSG_MAP()
+   void OnFinalMessage(HWND hWnd)
+   {
+      ::PostQuitMessage(0);
+   }
+
 DECLARE_REGISTRY_RESOURCEID(IDR_MAINWND)
 
 DECLARE_NOT_AGGREGATABLE(CMainWnd)
