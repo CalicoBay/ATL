@@ -12,9 +12,13 @@ LRESULT CATLSingleFrame::OnAboutBox(WORD , WORD , HWND , BOOL& )
 	return 0;
 }
 
-LRESULT CATLSingleFrame::OnSize(UINT , WPARAM , LPARAM , BOOL& )
+LRESULT CATLSingleFrame::OnSize(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	return 0;
+   RECT rc;
+   GetClientRect(&rc);
+   ::SetWindowPos(m_hwndEdit, HWND_TOP, 0, 0, rc.right, rc.bottom, 0);
+   //bHandled = FALSE;
+   return 0;
 }
 
 LRESULT CATLSingleFrame::OnCreate(UINT , WPARAM , LPARAM , BOOL& )
