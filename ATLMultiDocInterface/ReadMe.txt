@@ -1,3 +1,22 @@
+// December 5, 2016 ////////////////////////////////////////////////////////////////
+Upgrading project 'ATLMultiDocEdit'...
+	Configuration 'Debug|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Debug|x64': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|x64': changing Platform Toolset to 'v140' (was 'v120').
+Upgrading project 'ATL-MDI'...
+	Configuration 'Debug|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Debug|x64': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|x64': changing Platform Toolset to 'v140' (was 'v120').
+Upgrading project 'MultiRich'...
+	Configuration 'Debug|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Debug|x64': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|x64': changing Platform Toolset to 'v140' (was 'v120').
+Retargeting End: 3 completed, 0 failed, 0 skipped
+////////////////////////////////////////////////////////////////////////////////////
+
 The ATL provides CWindowImpl<class, CWindow, CWinTraits>. CWinTraits come in
 Frame, MDI Child and Control flavours. If using the frame as a MDI frame one cannot
 just simply set m_pfnSuperWindowProc with the overide because ::DefFrameProc has an
