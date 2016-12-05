@@ -1,3 +1,22 @@
+// December 5, 2016 ////////////////////////////////////////////////////////////////
+Upgrading project 'ATLMultiDocEdit'...
+	Configuration 'Debug|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Debug|x64': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|x64': changing Platform Toolset to 'v140' (was 'v120').
+Upgrading project 'ATL-MDI'...
+	Configuration 'Debug|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Debug|x64': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|x64': changing Platform Toolset to 'v140' (was 'v120').
+Upgrading project 'MultiRich'...
+	Configuration 'Debug|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Debug|x64': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|Win32': changing Platform Toolset to 'v140' (was 'v120').
+	Configuration 'Release|x64': changing Platform Toolset to 'v140' (was 'v120').
+Retargeting End: 3 completed, 0 failed, 0 skipped
+////////////////////////////////////////////////////////////////////////////////////
+
 ========================================================================
     CONSOLE APPLICATION : MultiRich Project Overview
 ========================================================================
