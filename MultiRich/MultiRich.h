@@ -22,10 +22,12 @@ public:
 	static FINDREPLACE s_FINDREPLACE;
 	std::vector<CMultiRichChild*> m_vecMDIChildren;
 	std::vector<CString> m_vecTitlesToRecycle;
+	std::vector<CString> m_vecMRUs;
 	DECLARE_WND_CLASS(_T("MULTIRICHEDIT"))
 	BEGIN_MSG_MAP(CMultiRichFrame)
 		//Empty map is neccessary to define
 		//ProcessWindowMessage(..) declared somewhere in the base
+		COMMAND_RANGE_HANDLER(ID_FILE_MRU_FIRST, ID_FILE_MRU_LAST, OnOpenRecentFile)
 	END_MSG_MAP()
 	static LRESULT CALLBACK FrameWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	static UINT_PTR CALLBACK FindHookProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -54,8 +56,10 @@ public:
 protected:
 	UINT m_NewCount;
 	LRESULT ChildDispatch(WORD wParamHi, WORD wCommandLo, LPARAM lParam, BOOL& bHandled);
+	LRESULT OnOpenRecentFile(WORD, WORD, HWND, BOOL&);
 	static VOID InitFIND();
 	static VOID InitFINDREPLACE();
+	BOOL m_bStringLoaded;
 };
 
 class CMultiRichModule : public ATL::CAtlExeModuleT<CMultiRichModule>

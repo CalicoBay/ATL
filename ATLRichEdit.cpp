@@ -11,6 +11,75 @@ public:
 	_atlRichEditCookie(CATLRichEdit* pRich, CAtlFile& file) : m_pATLRichEdit(pRich), m_File(file), m_hResult(S_OK){}
 };
 
+LRESULT CATLRichEdit::OnKeyDown(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	UINT keycode = static_cast<UINT>(wParam);// , LOWORD(lParam), HIWORD(lParam)
+	//WPARAM numZoom = 0;
+	//LPARAM denZoom = 0;
+	//DWORD dwLastError = NO_ERROR;
+	LRESULT bReturn = FALSE;
+	bHandled = FALSE;
+	switch(keycode)
+	{
+	case VK_ADD:
+	case VK_OEM_PLUS:
+		if((::GetKeyState(VK_CONTROL) >> 1))
+		{
+			//MessageBox(_T("Control and Plus pressed"));
+			Edit_GetZoom(m_hWnd, &m_numZoom, &m_denZoom);
+			if(0 == m_numZoom)
+			{
+				m_numZoom = 2;
+			}
+			else
+			{
+				m_numZoom *= 2;
+			}
+			if(0 == m_denZoom)
+			{
+				m_denZoom = 1;
+			}
+			Edit_SetZoom(m_hWnd, m_numZoom, m_denZoom);
+			bHandled = TRUE;
+			break;
+		}
+	case VK_OEM_MINUS:
+	case VK_SUBTRACT:
+		if((::GetKeyState(VK_CONTROL) >> 1))
+		{
+			Edit_GetZoom(m_hWnd, &m_numZoom, &m_denZoom);
+			//MessageBox(_T("Control and Minus pressed"));
+			if(0 == m_numZoom)
+			{
+				m_numZoom = 1;
+			}
+			if(0 == m_denZoom)
+			{
+				m_denZoom = 2;
+			}
+			else
+			{
+				m_denZoom *= 2;
+			}
+			Edit_SetZoom(m_hWnd, m_numZoom, m_denZoom);
+			bHandled = TRUE;
+			break;
+		}
+	case VK_NUMPAD0:
+	case 0x30:
+		if((::GetKeyState(VK_CONTROL) >> 1))
+		{
+			//MessageBox(_T("Control and Zero pressed"));
+			m_numZoom = 0;
+			m_denZoom = 0;
+			Edit_SetZoom(m_hWnd, m_numZoom, m_denZoom);
+			bHandled = TRUE;
+			break;
+		}
+	}
+	return 0;
+}
+
 int CATLRichEdit::AskType(bool bSaveAs/* = false*/)
 {
 	int iPush;
@@ -350,7 +419,7 @@ HRESULT CATLRichEdit::Find(LPFINDREPLACE pFindReplace, bool bReplace/* = false*/
 				hr = S_OK;
 				if(bReplace)
 				{
-					SETTEXTEX st = {ST_SELECTION|ST_KEEPUNDO|ST_UNICODE, -1};
+					SETTEXTEX st = {ST_SELECTION|ST_KEEPUNDO|ST_UNICODE, UINT(-1)};
 					if(SF_UNICODE & m_StreamFormat)
 					{
 						st.flags |= ST_UNICODE;

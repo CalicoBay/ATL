@@ -37,7 +37,7 @@ HRESULT CBomFile::ReadEncoding()
 
 int CBomFile::GetEncoding()
 {//These comparisons assume we are on a little endian platform, the little end is first in memory.
-	size_t cbLength;
+	ULONG64 cbLength = 0ULL;
 	int iUTF = -1;
 	if(SUCCEEDED(GetSize(cbLength)))
 	{
@@ -70,7 +70,7 @@ int CBomFile::GetEncoding()
 			}
 			else if((0x1F < m_BOM.BOM[0]) && (0x7F > m_BOM.BOM[0]))
 			{
-				if(0 == m_BOM.BOM[1])
+				if((1ULL < m_ullSize) && (0 == m_BOM.BOM[1])) //One character ANSI or UTF-8 unencoded files were passing this test.
 				{//Unencoded UTF16
 					iUTF = BOM::cpUTF16LE;
 				}

@@ -7,7 +7,7 @@
 LRESULT CATLSingleFrame::OnAboutBox(WORD , WORD , HWND , BOOL& )
 {
 	CString sTitle;
-	sTitle.LoadStringW(IDS_APP_TITLE);
+	BOOL bReturn = sTitle.LoadStringW(IDS_APP_TITLE);
     ::ShellAbout(m_hWnd, sTitle, NULL, NULL);
 	return 0;
 }
@@ -21,12 +21,81 @@ LRESULT CATLSingleFrame::OnSize(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL& b
    return 0;
 }
 
+LRESULT CATLEdit::OnKeyDown(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	UINT keycode = static_cast<UINT>(wParam);// , LOWORD(lParam), HIWORD(lParam)
+	//WPARAM numZoom = 0;
+	//LPARAM denZoom = 0;
+	//DWORD dwLastError = NO_ERROR;
+	LRESULT bReturn = FALSE;
+	bHandled = FALSE;
+	switch(keycode)
+	{
+	case VK_ADD:
+	case VK_OEM_PLUS:
+		if((::GetKeyState(VK_CONTROL) >> 1))
+		{
+			//MessageBox(_T("Control and Plus pressed"));
+			Edit_GetZoom(m_hWnd, &m_numZoom, &m_denZoom);
+			if(0 == m_numZoom)
+			{
+				m_numZoom = 2;
+			}
+			else
+			{
+				m_numZoom *= 2;
+			}
+			if(0 == m_denZoom)
+			{
+				m_denZoom = 1;
+			}
+			Edit_SetZoom(m_hWnd, m_numZoom, m_denZoom);
+			bHandled = TRUE;
+			break;
+		}
+	case VK_OEM_MINUS:
+	case VK_SUBTRACT:
+		if((::GetKeyState(VK_CONTROL) >> 1))
+		{
+			Edit_GetZoom(m_hWnd, &m_numZoom, &m_denZoom);
+			//MessageBox(_T("Control and Minus pressed"));
+			if(0 == m_numZoom)
+			{
+				m_numZoom = 1;
+			}
+			if(0 == m_denZoom)
+			{
+				m_denZoom = 2;
+			}
+			else
+			{
+				m_denZoom *= 2;
+			}
+			Edit_SetZoom(m_hWnd, m_numZoom, m_denZoom);
+			bHandled = TRUE;
+			break;
+		}
+	case VK_NUMPAD0:
+	case 0x30:
+		if((::GetKeyState(VK_CONTROL) >> 1))
+		{
+			//MessageBox(_T("Control and Zero pressed"));
+			m_numZoom = 0;
+			m_denZoom = 0;
+			Edit_SetZoom(m_hWnd, m_numZoom, m_denZoom);
+			bHandled = TRUE;
+			break;
+		}
+	}
+	return 0;
+}
+
 LRESULT CATLSingleFrame::OnCreate(UINT , WPARAM , LPARAM , BOOL& )
 {
 	CATLEdit* pATLEdit = new CATLEdit;
 	if(NULL != pATLEdit)
 	{
-		m_hwndEdit = pATLEdit->Create(m_hWnd);
+		m_hwndEdit = pATLEdit->Create(m_hWnd, 0, __nullptr, 0, ES_EX_ZOOMABLE);
 		if(0 == m_hwndEdit)
 		{
 			delete pATLEdit;

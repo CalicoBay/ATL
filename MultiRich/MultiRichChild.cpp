@@ -73,7 +73,7 @@ LRESULT CMultiRichChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lPara
 			CATLRichEdit* pATLEdit = new CATLRichEdit;
 			if(__nullptr != pATLEdit)
 			{
-				m_hwndEdit = pATLEdit->Create(m_hWnd);
+				m_hwndEdit = pATLEdit->Create(m_hWnd, 0, __nullptr, 0, ES_EX_ZOOMABLE);
 				if(0 == m_hwndEdit)
 				{
 					delete pATLEdit;

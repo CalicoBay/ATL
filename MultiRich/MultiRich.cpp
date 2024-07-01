@@ -27,7 +27,7 @@ CMultiRichFrame::CMultiRichFrame():
 	m_hPregnantMenu(__nullptr),
 	m_hChildIcon(__nullptr)
 {
-	m_sUntitled.LoadStringW(IDS_UNTITLED);
+	m_bStringLoaded = m_sUntitled.LoadStringW(IDS_UNTITLED);
 	s_FindReplaceMsg = ::RegisterWindowMessage(FINDMSGSTRING);
 }
 
@@ -62,7 +62,7 @@ VOID CMultiRichFrame::InitFINDREPLACE()
 LRESULT CMultiRichFrame::OnAboutBox(HWND hWnd, WORD , WORD , HWND , BOOL& )
 {
 	CString sTitle;
-	sTitle.LoadStringW(IDS_APP_TITLE);
+	m_bStringLoaded = sTitle.LoadStringW(IDS_APP_TITLE);
     ::ShellAbout(hWnd, sTitle, NULL, NULL);
 	return 0;
 }
@@ -83,7 +83,7 @@ LRESULT CMultiRichFrame::OnFileNew(WORD, WORD, HWND, BOOL&)
 		}
 		else
 		{
-			sTitle.Format(_T("%s%d"), m_sUntitled, m_NewCount++);
+			sTitle.Format(_T("%s%d"), (LPCTSTR)m_sUntitled, m_NewCount++);
 		}
 
 		pMDIChild->GetWndClassInfo().m_wc.hIcon = m_hChildIcon;
@@ -151,6 +151,7 @@ LRESULT CMultiRichFrame::OnFileOpen(WORD, WORD, HWND, BOOL&)
 				if(NULL != hwndChild)
 				{
 					m_vecMDIChildren.push_back(pMDIChild);
+					m_vecMRUs.push_back(wszFilePath);
 					if(1 == m_vecMDIChildren.size())
 					{//If needed show the right menus
 						HMENU hCurrentMenu = GetMenu();
@@ -293,7 +294,12 @@ LRESULT CMultiRichFrame::OnFileSaveAs(WORD, WORD, HWND, BOOL&)
 	return 0;
 }
 
-
+LRESULT CMultiRichFrame::OnOpenRecentFile(WORD, WORD, HWND, BOOL&)
+{
+	LRESULT lr = 0;
+	MessageBox(_T("in OnOpenRecentFile"), _T("MultiRich"));
+	return lr;
+}
 LRESULT CMultiRichFrame::OnInitMenu(UINT , WPARAM , LPARAM , BOOL& )
 {
 	return 0;
@@ -314,6 +320,18 @@ LRESULT CMultiRichFrame::OnMDIDestroy(UINT nMsg, WPARAM wParam, LPARAM lParam, B
 		if(lParam == (LPARAM)thisChild)
 		{
 			CString sWinText((LPCTSTR)wParam);
+			//if(thisChild->m_pATLRichEdit->IsDirty())// Too late for this at this time the window is already gone. IsDirty throws.
+			//{
+			//	int iResult;
+			//	if(SUCCEEDED(::TaskDialog(__nullptr, __nullptr, __nullptr, sWinText, L"Do you wish to save your changes?", TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON, TD_WARNING_ICON, &iResult)))
+			//	{
+			//		if(IDYES == iResult)
+			//		{
+			//			MessageBox(_T("Sending you back to save."), sWinText);
+			//			return S_FALSE;
+			//		}
+			//	}
+			//}
 			if(0 == sWinText.Find(m_sUntitled, 0))
 			{
 				m_vecTitlesToRecycle.push_back(sWinText);
@@ -504,6 +522,25 @@ LRESULT CALLBACK CMultiRichFrame::FrameWindowProc(HWND hWnd, UINT uMsg, WPARAM w
 					thisFrame->OnAboutBox(thisFrame->m_hWnd, HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
 					break;
 				}
+			case ID_FILE_MRU_FIRST:
+			case ID_FILE_MRU_FILE2:
+			case ID_FILE_MRU_FILE3:
+			case ID_FILE_MRU_FILE4:
+			case ID_FILE_MRU_FILE5:
+			case ID_FILE_MRU_FILE6:
+			case ID_FILE_MRU_FILE7:
+			case ID_FILE_MRU_FILE8:
+			case ID_FILE_MRU_FILE9:
+			case ID_FILE_MRU_FILE10:
+			case ID_FILE_MRU_FILE11:
+			case ID_FILE_MRU_FILE12:
+			case ID_FILE_MRU_FILE13:
+			case ID_FILE_MRU_FILE14:
+			case ID_FILE_MRU_FILE15:
+			case ID_FILE_MRU_LAST:
+				{
+					thisFrame->OnOpenRecentFile(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
+				}
 			}
 
 			break;
@@ -639,7 +676,7 @@ HRESULT CMultiRichModule::PreMessageLoop(int nCmdShow) throw()
 	HMENU hPregnantMenu = ::LoadMenu(GetModuleHINSTANCE(), MAKEINTRESOURCE(IDR_TEXTTYPE));
 	HICON hIcon = ::LoadIcon(GetModuleHINSTANCE(), MAKEINTRESOURCE(IDI_MULTIRICH));
 	CString sTitle;
-	sTitle.LoadStringW(IDS_APP_TITLE);
+	BOOL bStringLoaded = sTitle.LoadStringW(IDS_APP_TITLE);
 	m_pFrame->GetWndClassInfo().m_wc.hIcon = hIcon;
 	HWND hwndFrame = m_pFrame->Create(0, rcPos, sTitle, 0, 0, hMainFrameMenu);//, m_pFrame);
 	if(__nullptr == hwndFrame)

@@ -390,7 +390,7 @@ int CBomFile::GetEncoding()
 	}
 	else if((0x1F < m_BOM.BOM[0]) && (0x7F > m_BOM.BOM[0]))
 	{
-		if(0 == m_BOM.BOM[1])
+		if((1ULL < m_ullSize) && (0 == m_BOM.BOM[1])) //One character ANSI or UTF-8 unencoded files were passing this test.
 		{//Unencoded UTF16
 			iUTF = 16;
 		}

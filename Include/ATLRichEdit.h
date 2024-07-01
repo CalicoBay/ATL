@@ -22,10 +22,14 @@ public:
 		m_UTF(0),
 		m_StreamFormat(0),
 		m_NewStreamFormat(SF_TEXT),
+		m_numZoom(0),
+		m_denZoom(0),
 		m_bIsStoring(false){}
 	DECLARE_WND_SUPERCLASS(_T("CATLRichEdit"), MSFTEDIT_CLASS)
 	BEGIN_MSG_MAP(CATLRichEdit)
+		MESSAGE_HANDLER(WM_KEYDOWN, OnKeyDown)
 	END_MSG_MAP()
+	LRESULT OnKeyDown(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	HRESULT OpenFile(LPCWSTR wszFilePath, DWORD dwAccess, DWORD dwShare, DWORD dwCreate);
 	HRESULT SaveFile(LPCWSTR wszFilePath = __nullptr);
 	HRESULT Find(LPFINDREPLACE pFindReplace, bool bReplace = false);
@@ -55,5 +59,8 @@ protected:
 	HRESULT WriteOut(CAtlFile& fileToSave, bool bSelection = false);
 	int AskType(bool bSaveAs = false);
 	VOID DoBOM(CAtlFile& fileToMark);
+private:
+	WPARAM m_numZoom;
+	LPARAM m_denZoom;
 };
 
