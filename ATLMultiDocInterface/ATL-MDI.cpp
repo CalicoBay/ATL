@@ -277,7 +277,7 @@ HRESULT CATLMDIModule::PreMessageLoop(int nCmdShow) throw()
 	}
 	m_pFrame->m_hNoPaneMenu = hMenu;
 	m_pFrame->ShowWindow(nCmdShow);
-   m_pFrame->m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZEWE));
+   m_pFrame->m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZENS));
    m_hAccelTable = LoadAccelerators(GetModuleHINSTANCE(), MAKEINTRESOURCE(IDR_ACCELERATOR1));
 	return hResult;
 }

@@ -14,7 +14,7 @@ CATLMDIChild::CATLMDIChild(void) :
 {
    ::memset(&m_RectStatic, 0, sizeof(RECT));
    ::memset(&m_RectEdit, 0, sizeof(RECT));
-   m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZEWE));
+   m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZENS));
    m_sContent = _T("TODO: Something with this space!");
    m_sStaticContent = _T("HWND hwndStatic = m_Static.Create(m_hWnd, rcStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY);");
 }
@@ -44,11 +44,11 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
          GetClientRect(&rcClient);
          m_RectStatic.left = rcClient.left;
          m_RectStatic.top = rcClient.top;
-         m_RectStatic.right = 250;
-         m_RectStatic.bottom = rcClient.bottom;
+         m_RectStatic.right = rcClient.right;
+         m_RectStatic.bottom = (rcClient.bottom - rcClient.top) / 2;
 
-         m_RectEdit.left = rcClient.left + 255;
-         m_RectEdit.top = rcClient.top;
+         m_RectEdit.left = rcClient.left;
+         m_RectEdit.top = m_RectStatic.bottom + 5;
          m_RectEdit.right = rcClient.right;
          m_RectEdit.bottom = rcClient.bottom;
          HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY);
@@ -87,10 +87,10 @@ LRESULT CATLMDIChild::OnPaint(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
 	HDC hdc = GetDC();
    RECT rectToPaint;
    HRGN rgnToPaint;
-   rectToPaint.bottom = m_RectStatic.bottom;
-   rectToPaint.left = m_RectStatic.right;
-   rectToPaint.right = m_RectEdit.left;
-   rectToPaint.top = m_RectEdit.top;
+   rectToPaint.bottom = m_RectEdit.top;
+   rectToPaint.left = m_RectStatic.left;
+   rectToPaint.right = m_RectEdit.right;
+   rectToPaint.top = m_RectStatic.bottom;
    rgnToPaint = ::CreateRectRgnIndirect(&rectToPaint);
 	BeginPaint(&ps);
    ::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_ACTIVECAPTION));
@@ -103,15 +103,16 @@ LRESULT CATLMDIChild::OnSize(UINT, WPARAM, LPARAM, BOOL&)
 {
    RECT rcClient;
    GetClientRect(&rcClient);
-   m_RectEdit.top = m_RectStatic.top = rcClient.top;
-   m_RectEdit.bottom = m_RectStatic.bottom = rcClient.bottom;
-   if(rcClient.right > (m_RectStatic.right + 150))
+   m_RectStatic.left = m_RectEdit.left = rcClient.left;
+   m_RectStatic.right = m_RectEdit.right = rcClient.right;
+
+   if(rcClient.bottom > (m_RectStatic.bottom + 150))
    {
-      m_RectEdit.right = rcClient.right;
+      m_RectEdit.bottom = rcClient.bottom;
    }
    else
    {
-      m_RectEdit.right = m_RectStatic.right + 150;
+      m_RectEdit.bottom = m_RectStatic.bottom + 150;
    }
    m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);
    m_Edit.SetWindowPos(HWND_TOP, &m_RectEdit, 0);
@@ -139,10 +140,10 @@ LRESULT CATLMDIChild::OnLButtonDown(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam,
 {
    RECT rcClient;
    GetWindowRect(&rcClient);
-   rcClient.left += 100;
-   rcClient.right -= 150;
+   rcClient.top += 100;
+   rcClient.bottom -= 150;
    ::ClipCursor(&rcClient);
-   begX = GET_X_LPARAM(lParam);
+   begX = GET_Y_LPARAM(lParam);
    ::SetCursor(m_hSplitCursor);
    ::SetCapture(m_hWnd);
    return 0;
@@ -150,10 +151,10 @@ LRESULT CATLMDIChild::OnLButtonDown(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam,
 
 LRESULT CATLMDIChild::OnLButtonUp(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-   endX = GET_X_LPARAM(lParam);
+   endX = GET_Y_LPARAM(lParam);
    short deltaX = endX - begX;
-   m_RectStatic.right += deltaX;
-   m_RectEdit.left += deltaX; 
+   m_RectStatic.bottom += deltaX;
+   m_RectEdit.top += deltaX; 
    m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);
    m_Edit.SetWindowPos(HWND_TOP, &m_RectEdit, 0);
    ::ClipCursor(NULL);
