@@ -12,5 +12,10 @@ WRL is now superseded by C++/WinRT, a standard C++17 language projection for Win
 With C++/WinRT, you can both consume and author Windows Runtime APIs using any standards-conformant C++17 compiler. C++/WinRT typically performs better and produces smaller binaries than any other language option for the Windows Runtime. We will continue to support C++/CX and WRL, but highly recommend that new applications use C++/WinRT. For more information, see C++/WinRT.
 	https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/index
 
-I'm going to use D:\DevOps\keesj\Repos\WindowsAppSDK-Samples2024\Samples\Islands\cpp-win32-unpackaged\SimpleIslandApp.cpp as an example/starting point, it may not work.
+I'm going to use D:\DevOps\keesj\Repos\WindowsAppSDK-Samples2024\Samples\Islands\cpp-win32-unpackaged\SimpleIslandApp.cpp as an example/starting point, it may not work. NuGet packages getting updated:
+	SimpleIslandApp Updates:
+		Microsoft.WindowsAppSDK.1.5.240227000 -> Microsoft.WindowsAppSDK.1.5.240607001
+		Microsoft.Windows.SDK.BuildTools.10.0.22621.1 -> Microsoft.Windows.SDK.BuildTools.10.0.26100.1
+		Microsoft.Windows.CppWinRT.2.0.230706.1 -> Microsoft.Windows.CppWinRT.2.0.240405.15
+
 
