@@ -1,0 +1,16 @@
+I'm going to use the Z:\CalicoBay\ATL\ATL-MDI.vcxproj to see if I can place a XAML Island in it?
+At https://learn.microsoft.com/en-us/cpp/atl/reference/ccontainedwindowt-class?view=msvc-170 it says:
+
+Important
+This class and its members cannot be used in applications that execute in the Windows Runtime.
+
+But the term "Windows Runtime" may mean a few different things, see below. So I'm going to try.
+
+Note
+WRL is now superseded by C++/WinRT, a standard C++17 language projection for Windows Runtime APIs. C++/WinRT is available in the Windows SDK from version 1803 (10.0.17134.0) onward. C++/WinRT is implemented entirely in header files, and designed to provide you with first-class access to the modern Windows API.
+
+With C++/WinRT, you can both consume and author Windows Runtime APIs using any standards-conformant C++17 compiler. C++/WinRT typically performs better and produces smaller binaries than any other language option for the Windows Runtime. We will continue to support C++/CX and WRL, but highly recommend that new applications use C++/WinRT. For more information, see C++/WinRT.
+	https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/index
+
+I'm going to use D:\DevOps\keesj\Repos\WindowsAppSDK-Samples2024\Samples\Islands\cpp-win32-unpackaged\SimpleIslandApp.cpp as an example/starting point, it may not work.
+
