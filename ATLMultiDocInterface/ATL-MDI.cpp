@@ -1,9 +1,20 @@
 // ATL-MDI.cpp : Implementation of WinMain
 
 
-#include "stdafx.h"
+#include "pch.h"
 #include "ATL-MDIChild.h"
 #include "ATL-MDI.h"
+#include <Microsoft.UI.Dispatching.Interop.h> // For ContentPreTranslateMessage
+
+namespace winrt
+{
+	using namespace winrt::Microsoft::UI;
+	using namespace winrt::Microsoft::UI::Dispatching;
+	using namespace winrt::Microsoft::UI::Xaml;
+	using namespace winrt::Microsoft::UI::Xaml::Hosting;
+	using namespace winrt::Microsoft::UI::Xaml::Markup;
+}
+
 
 LRESULT CATLMDIFrame::OnAboutBox(HWND hWnd, WORD , WORD , HWND , BOOL& )
 {
@@ -255,6 +266,9 @@ HRESULT CATLMDIModule::PreMessageLoop(int nCmdShow) throw()
 	//	//but if PreMessageLoop doesn't return S_OK RunMessageLoop won't run
 	//	hResult = S_OK;
 	//}
+	//m_pDispatcherQueueController = &(winrt::Microsoft::UI::Dispatching::DispatcherQueueController::CreateOnCurrentThread());
+	//winrt::uninit_apartment();
+	//m_pDispatcherQueueController = new winrt::Microsoft::UI::Dispatching::DispatcherQueueController;
 
 	m_pFrame = new(std::nothrow) CATLMDIFrame;
 	if(NULL == m_pFrame)
@@ -277,24 +291,34 @@ HRESULT CATLMDIModule::PreMessageLoop(int nCmdShow) throw()
 	}
 	m_pFrame->m_hNoPaneMenu = hMenu;
 	m_pFrame->ShowWindow(nCmdShow);
-   m_pFrame->m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZENS));
+	m_pFrame->m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZENS));
    m_hAccelTable = LoadAccelerators(GetModuleHINSTANCE(), MAKEINTRESOURCE(IDR_ACCELERATOR1));
 	return hResult;
 }
 
 void CATLMDIModule::RunMessageLoop() throw()
 {
-	MSG msg = {};
-	while((GetMessage(&msg, 0, 0, 0) > 0))//WM_QUIT != msg.message
+	try
 	{
-		if(!::TranslateMDISysAccel(m_pFrame->m_hMDIClient, &msg))
+		auto dispatcherQueueController{ winrt::DispatcherQueueController::CreateOnCurrentThread() };
+		MSG msg = {};
+
+		while((GetMessage(&msg, 0, 0, 0) > 0))//WM_QUIT != msg.message
 		{
-         if(0 == ::TranslateAccelerator(m_pFrame->m_hWnd, m_hAccelTable, &msg))
-         {
-            ::TranslateMessage(&msg);
-            ::DispatchMessage(&msg);
-         }
+			if(!::TranslateMDISysAccel(m_pFrame->m_hMDIClient, &msg))
+			{
+				if(0 == ::TranslateAccelerator(m_pFrame->m_hWnd, m_hAccelTable, &msg))
+				{
+					::TranslateMessage(&msg);
+					::DispatchMessage(&msg);
+				}
+			}
 		}
+		dispatcherQueueController.ShutdownQueue();
+	}
+	catch(const winrt::hresult_error& exception)
+	{
+		int32_t iResult = exception.code().value;
 	}
 }
 
@@ -318,6 +342,11 @@ CATLMDIModule _AtlModule;
 extern "C" int WINAPI _tWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, 
 								LPTSTR /*lpCmdLine*/, int nShowCmd)
 {
-	return _AtlModule.WinMain(nShowCmd);
+	//winrt::uninit_apartment();
+	winrt::init_apartment(winrt::apartment_type::single_threaded);//winrt::apartment_type::single_threaded
+
+	int iReturn = _AtlModule.WinMain(nShowCmd);
+
+	return iReturn;
 }
 
