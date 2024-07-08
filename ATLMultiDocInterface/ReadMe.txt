@@ -114,4 +114,14 @@ Many things have changed and this project stills needs cleanup and more.
 
 The original from Team Foundation Server is downloaded as a zip in C:\Users\keesj\OneDrive\Code Samples\ATL.zip
 on this laptop. It was unzipped to \\OmenReDone\Z:\ATL which also has an explanatory text file, I believe.
+
+https://learn.microsoft.com/en-us/archive/msdn-magazine/2000/april/which-framework-should-you-use-building-activex-controls-with-atl-and-mfc
+Old article in April, 2000, MSDN Magazine
+https://learn.microsoft.com/en-us/windows/win32/lwef/screen-saver-library
+https://learn.microsoft.com/en-us/windows/win32/winmsg/window-classes
+https://learn.microsoft.com/en-us/cpp/atl/reference/window-class-macros?view=msvc-170&devlangs=cpp&f1url=%3FappId%3DDev17IDEF1%26l%3DEN-US%26k%3Dk(ATLWIN%252FDECLARE_WND_CLASS)%3Bk(DECLARE_WND_CLASS)%3Bk(DevLang-C%252B%252B)%3Bk(TargetOS-Windows)%26rd%3Dtrue#declare_wnd_class
+https://learn.microsoft.com/en-us/cpp/atl/message-maps-atl?view=msvc-170
+https://learn.microsoft.com/en-us/cpp/atl/reference/ccontainedwindowt-class?view=msvc-170
+https://learn.microsoft.com/en-us/uwp/api/windows.ui.xaml?view=winrt-26100
+https://learn.microsoft.com/en-us/microsoft-edge/webview2/get-started/winui
 //2024-07-08

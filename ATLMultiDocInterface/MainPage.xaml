@@ -18,7 +18,7 @@
             <Button x:Name="Button" Click="ClickHandler">Click Me</Button>
             <TextBox Text="Text goes here" Margin="10" />
         </StackPanel>
-        <WebView2 Grid.Row="1" Source="http://bing.com" />
+        <WebView2 x:Name="OurWeb" Grid.Row="1" Source="http://bing.com" />
         <Button Grid.Row="2">Last Button</Button>
     </Grid>
 </Page>

@@ -67,14 +67,19 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
          m_RectStatic.bottom = rcClient.bottom;//(rcClient.bottom - rcClient.top) / 2;
 
          HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic);// , _T("XamlSource"), WS_CHILD | WS_BORDER | WS_VISIBLE);// | WS_VSCROLL | ES_MULTILINE | ES_READONLY
-         WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(hwndStatic, GWLP_USERDATA));
-         windowInfo = new WindowInfo();
-         ::SetWindowLongPtr(hwndStatic, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowInfo));
-         // Create our DesktopWindowXamlSource and attach it to our hwnd.  This is our "island".
-         windowInfo->DesktopWindowXamlSource = winrt::DesktopWindowXamlSource{};
-         windowInfo->DesktopWindowXamlSource.Initialize(winrt::GetWindowIdFromWindow(hwndStatic));
-         // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
-         windowInfo->DesktopWindowXamlSource.Content(winrt::make<winrt::ATLMDI::implementation::MainPage>());
+         if(__nullptr != hwndStatic)
+         {
+            WindowInfo* windowInfo = new WindowInfo();
+            if(__nullptr != windowInfo)
+            {
+               ::SetWindowLongPtr(hwndStatic, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowInfo));
+               // Create our DesktopWindowXamlSource and attach it to our hwnd.  This is our "island".
+               windowInfo->DesktopWindowXamlSource = winrt::DesktopWindowXamlSource{};
+               windowInfo->DesktopWindowXamlSource.Initialize(winrt::GetWindowIdFromWindow(hwndStatic));
+               // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
+               windowInfo->DesktopWindowXamlSource.Content(winrt::make<winrt::ATLMDI::implementation::MainPage>());
+            }
+         }
       }
 	}
 
