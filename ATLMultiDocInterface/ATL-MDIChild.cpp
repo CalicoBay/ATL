@@ -15,7 +15,7 @@ namespace winrt
 }
 
 
-static short begX = 0;
+static uint32_t begX = 0;
 static short endX = 0;
 
 // Extra state for our top-level window, we point to from GWLP_USERDATA.
@@ -111,37 +111,41 @@ LRESULT CATLMDIChild::OnSetText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd,
 	return 0;
 }
 
-LRESULT CATLMDIChild::OnPaint(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-{
-	//PAINTSTRUCT ps;
-	//HDC hdc = GetDC();
- //  RECT rectToPaint;
- //  HRGN rgnToPaint;
- //  rectToPaint.bottom = m_RectEdit.top;
- //  rectToPaint.left = m_RectStatic.left;
- //  rectToPaint.right = m_RectEdit.right;
- //  rectToPaint.top = m_RectStatic.bottom;
- //  rgnToPaint = ::CreateRectRgnIndirect(&rectToPaint);
-	//BeginPaint(&ps);
- //  ::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_ACTIVECAPTION));
-	//EndPaint(&ps);
-   PAINTSTRUCT ps;
-   HDC hdc = GetDC();
-   WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(m_Static, GWLP_USERDATA));
-   HRGN rgnToPaint = ::CreateRectRgnIndirect(&m_RectStatic);
-   BeginPaint(&ps);
-   //::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_WINDOW));
-   EndPaint(&ps);
-   if(__nullptr != windowInfo)
-   {
-      if(windowInfo->DesktopWindowXamlSource)
-      {
-         windowInfo->DesktopWindowXamlSource.SiteBridge().MoveAndResize({ m_RectStatic.left, m_RectStatic.top, m_RectStatic.right, m_RectStatic.bottom });
-      }
-   }
-
-	return 0;
-}
+//LRESULT CATLMDIChild::OnPaint(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+//{
+//	//PAINTSTRUCT ps;
+//	//HDC hdc = GetDC();
+// //  RECT rectToPaint;
+// //  HRGN rgnToPaint;
+// //  rectToPaint.bottom = m_RectEdit.top;
+// //  rectToPaint.left = m_RectStatic.left;
+// //  rectToPaint.right = m_RectEdit.right;
+// //  rectToPaint.top = m_RectStatic.bottom;
+// //  rgnToPaint = ::CreateRectRgnIndirect(&rectToPaint);
+//	//BeginPaint(&ps);
+// //  ::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_ACTIVECAPTION));
+//	//EndPaint(&ps);
+//   //PAINTSTRUCT ps;
+//   //HDC hdc = GetDC();
+//   WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(m_Static, GWLP_USERDATA));
+//   //HRGN rgnToPaint = ::CreateRectRgnIndirect(&m_RectStatic);
+//   //BeginPaint(&ps);
+//   ////::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_WINDOW));
+//   //EndPaint(&ps);
+//   //if(__nullptr != windowInfo)
+//   //{
+//   //   if(windowInfo->DesktopWindowXamlSource)
+//   //   {
+//   //      windowInfo->DesktopWindowXamlSource.SiteBridge().MoveAndResize({ m_RectStatic.left, m_RectStatic.top, m_RectStatic.right, m_RectStatic.bottom });
+//   //      ++begX;
+//   //      CString sText;
+//   //      sText.Format(_T("Paint called %i times."), begX);
+//   //      SetWindowText((LPCTSTR)sText);
+//   //   }
+//   //}
+//
+//	return 0;
+//}
 
 LRESULT CATLMDIChild::OnSize(UINT, WPARAM, LPARAM, BOOL&)
 {
@@ -159,17 +163,21 @@ LRESULT CATLMDIChild::OnSize(UINT, WPARAM, LPARAM, BOOL&)
    //{
    //   m_RectEdit.bottom = m_RectStatic.bottom + 150;
    //}
-   BOOL bHandled = TRUE;
+   //BOOL bHandled = TRUE;
    //(void)OnPaint(0, 0, 0, bHandled);
-   m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, SWP_NOCOPYBITS | SWP_SHOWWINDOW);//SWP_NOCOPYBITS | SWP_NOZORDER | 
-   RedrawWindow(0, 0, RDW_ERASE | RDW_FRAME | RDW_INVALIDATE);
-   //if(__nullptr != windowInfo)
-   //{
-   //   if(windowInfo->DesktopWindowXamlSource)
-   //   {
-   //      windowInfo->DesktopWindowXamlSource.SiteBridge().MoveAndResize({ rcClient.left, rcClient.top, rcClient.right, rcClient.bottom });
-   //   }
-   //}
+   if(__nullptr != windowInfo)
+   {
+      if(windowInfo->DesktopWindowXamlSource)
+      {
+         windowInfo->DesktopWindowXamlSource.SiteBridge().MoveAndResize({ rcClient.left, rcClient.top, rcClient.right, rcClient.bottom });
+         ++begX;
+         CString sText;
+         sText.Format(_T("MoveAndResize called %i times."), begX);
+         SetWindowText((LPCTSTR)sText);
+      }
+   }
+   m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);// , SWP_NOCOPYBITS | SWP_SHOWWINDOW);//SWP_NOCOPYBITS | SWP_NOZORDER | 
+   //RedrawWindow(0, 0, RDW_ERASE | RDW_FRAME | RDW_INVALIDATE);
    return 0;
 }
 
