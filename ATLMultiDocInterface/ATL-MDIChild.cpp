@@ -1,9 +1,30 @@
 #include "pch.h"
 #include "ATL-MDIChild.h"
 #include "ATL-MDI.h"
+#include <App.xaml.h>
+#include <MainPage.h>
+#include <Microsoft.UI.Dispatching.Interop.h> // For ContentPreTranslateMessage
+
+namespace winrt
+{
+   using namespace winrt::Microsoft::UI;
+   using namespace winrt::Microsoft::UI::Dispatching;
+   using namespace winrt::Microsoft::UI::Xaml;
+   using namespace winrt::Microsoft::UI::Xaml::Hosting;
+   using namespace winrt::Microsoft::UI::Xaml::Markup;
+}
+
 
 static short begX = 0;
 static short endX = 0;
+
+// Extra state for our top-level window, we point to from GWLP_USERDATA.
+struct WindowInfo
+{
+   winrt::DesktopWindowXamlSource DesktopWindowXamlSource{ nullptr };
+   winrt::event_token TakeFocusRequestedToken{};
+   HWND LastFocusedWindow{ NULL };
+};
 
 CATLMDIChild::CATLMDIChild(void) : 
    m_Edit(_T("Edit"), this, 1),
@@ -45,19 +66,28 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
          m_RectStatic.left = rcClient.left;
          m_RectStatic.top = rcClient.top;
          m_RectStatic.right = rcClient.right;
-         m_RectStatic.bottom = (rcClient.bottom - rcClient.top) / 2;
+         m_RectStatic.bottom = rcClient.bottom;//(rcClient.bottom - rcClient.top) / 2;
 
          m_RectEdit.left = rcClient.left;
          m_RectEdit.top = m_RectStatic.bottom + 5;
          m_RectEdit.right = rcClient.right;
          m_RectEdit.bottom = rcClient.bottom;
-         HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY);
-         HWND hwndEdit = m_Edit.Create(m_hWnd, m_RectEdit, m_sContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE);
+
+         HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic);// , _T("XamlSource"), WS_CHILD | WS_BORDER | WS_VISIBLE);// | WS_VSCROLL | ES_MULTILINE | ES_READONLY
+         //HWND hwndEdit = m_Edit.Create(m_hWnd, m_RectEdit, m_sContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE);
          //if(0 != hwndEdit)
          //{
          //   m_Edit.SetFocus();
          //}
-		}
+         WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(hwndStatic, GWLP_USERDATA));
+         windowInfo = new WindowInfo();
+         ::SetWindowLongPtr(hwndStatic, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowInfo));
+         // Create our DesktopWindowXamlSource and attach it to our hwnd.  This is our "island".
+         windowInfo->DesktopWindowXamlSource = winrt::DesktopWindowXamlSource{};
+         windowInfo->DesktopWindowXamlSource.Initialize(winrt::GetWindowIdFromWindow(hwndStatic));
+         // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
+         windowInfo->DesktopWindowXamlSource.Content(winrt::make<winrt::ATLMDI::implementation::MainPage>());
+      }
 	}
 
 	return 0;
@@ -66,8 +96,8 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
 LRESULT CATLMDIChild::OnClearText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd, BOOL& /*bHandled*/)
 {
 	m_sContent.Empty();
-   m_Edit.SendMessage(EM_SETSEL, 0, -1);
-   m_Edit.SendMessage(EM_REPLACESEL, FALSE, (LPARAM)m_sContent.GetString());
+   //m_Edit.SendMessage(EM_SETSEL, 0, -1);
+   //m_Edit.SendMessage(EM_REPLACESEL, FALSE, (LPARAM)m_sContent.GetString());
    //Invalidate();
 	return 0;
 }
@@ -75,47 +105,71 @@ LRESULT CATLMDIChild::OnClearText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwn
 LRESULT CATLMDIChild::OnSetText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd, BOOL& /*bHandled*/)
 {
 	m_sContent = _T("TODO: We need to get some text from a TaskDialog for instance.");
-   m_Edit.SendMessage(EM_SETSEL, 0, -1);
-   m_Edit.SendMessage(EM_REPLACESEL, FALSE, (LPARAM)m_sContent.GetString());
+   //m_Edit.SendMessage(EM_SETSEL, 0, -1);
+   //m_Edit.SendMessage(EM_REPLACESEL, FALSE, (LPARAM)m_sContent.GetString());
 	//Invalidate();
 	return 0;
 }
 
 LRESULT CATLMDIChild::OnPaint(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
-	PAINTSTRUCT ps;
-	HDC hdc = GetDC();
-   RECT rectToPaint;
-   HRGN rgnToPaint;
-   rectToPaint.bottom = m_RectEdit.top;
-   rectToPaint.left = m_RectStatic.left;
-   rectToPaint.right = m_RectEdit.right;
-   rectToPaint.top = m_RectStatic.bottom;
-   rgnToPaint = ::CreateRectRgnIndirect(&rectToPaint);
-	BeginPaint(&ps);
-   ::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_ACTIVECAPTION));
-	EndPaint(&ps);
+	//PAINTSTRUCT ps;
+	//HDC hdc = GetDC();
+ //  RECT rectToPaint;
+ //  HRGN rgnToPaint;
+ //  rectToPaint.bottom = m_RectEdit.top;
+ //  rectToPaint.left = m_RectStatic.left;
+ //  rectToPaint.right = m_RectEdit.right;
+ //  rectToPaint.top = m_RectStatic.bottom;
+ //  rgnToPaint = ::CreateRectRgnIndirect(&rectToPaint);
+	//BeginPaint(&ps);
+ //  ::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_ACTIVECAPTION));
+	//EndPaint(&ps);
+   PAINTSTRUCT ps;
+   HDC hdc = GetDC();
+   WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(m_Static, GWLP_USERDATA));
+   HRGN rgnToPaint = ::CreateRectRgnIndirect(&m_RectStatic);
+   BeginPaint(&ps);
+   //::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_WINDOW));
+   EndPaint(&ps);
+   if(__nullptr != windowInfo)
+   {
+      if(windowInfo->DesktopWindowXamlSource)
+      {
+         windowInfo->DesktopWindowXamlSource.SiteBridge().MoveAndResize({ m_RectStatic.left, m_RectStatic.top, m_RectStatic.right, m_RectStatic.bottom });
+      }
+   }
 
 	return 0;
 }
 
 LRESULT CATLMDIChild::OnSize(UINT, WPARAM, LPARAM, BOOL&)
 {
+   WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(m_Static, GWLP_USERDATA));
    RECT rcClient;
    GetClientRect(&rcClient);
-   m_RectStatic.left = m_RectEdit.left = rcClient.left;
-   m_RectStatic.right = m_RectEdit.right = rcClient.right;
-
-   if(rcClient.bottom > (m_RectStatic.bottom + 150))
-   {
-      m_RectEdit.bottom = rcClient.bottom;
-   }
-   else
-   {
-      m_RectEdit.bottom = m_RectStatic.bottom + 150;
-   }
-   m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);
-   m_Edit.SetWindowPos(HWND_TOP, &m_RectEdit, 0);
+   //m_RectStatic.left = m_RectEdit.left = rcClient.left;
+   //m_RectStatic.right = m_RectEdit.right = rcClient.right;
+   m_RectStatic = rcClient;
+   //if(rcClient.bottom > (m_RectStatic.bottom + 150))
+   //{
+   //   m_RectEdit.bottom = rcClient.bottom;
+   //}
+   //else
+   //{
+   //   m_RectEdit.bottom = m_RectStatic.bottom + 150;
+   //}
+   BOOL bHandled = TRUE;
+   //(void)OnPaint(0, 0, 0, bHandled);
+   m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, SWP_NOCOPYBITS | SWP_SHOWWINDOW);//SWP_NOCOPYBITS | SWP_NOZORDER | 
+   RedrawWindow(0, 0, RDW_ERASE | RDW_FRAME | RDW_INVALIDATE);
+   //if(__nullptr != windowInfo)
+   //{
+   //   if(windowInfo->DesktopWindowXamlSource)
+   //   {
+   //      windowInfo->DesktopWindowXamlSource.SiteBridge().MoveAndResize({ rcClient.left, rcClient.top, rcClient.right, rcClient.bottom });
+   //   }
+   //}
    return 0;
 }
 
@@ -132,33 +186,33 @@ LRESULT CATLMDIChild::OnMouseMove(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, B
    //   //tme.hwndTrack = m_hWnd;
    //   //::SetCursor(m_hSplitCursor);
    //}
-   ::SetCursor(m_hSplitCursor);
+   //::SetCursor(m_hSplitCursor);
    return lResult;
 }
 
 LRESULT CATLMDIChild::OnLButtonDown(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-   RECT rcClient;
-   GetWindowRect(&rcClient);
-   rcClient.top += 100;
-   rcClient.bottom -= 150;
-   ::ClipCursor(&rcClient);
-   begX = GET_Y_LPARAM(lParam);
-   ::SetCursor(m_hSplitCursor);
-   ::SetCapture(m_hWnd);
+   //RECT rcClient;
+   //GetWindowRect(&rcClient);
+   //rcClient.top += 100;
+   //rcClient.bottom -= 150;
+   //::ClipCursor(&rcClient);
+   //begX = GET_Y_LPARAM(lParam);
+   //::SetCursor(m_hSplitCursor);
+   //::SetCapture(m_hWnd);
    return 0;
 }
 
 LRESULT CATLMDIChild::OnLButtonUp(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-   endX = GET_Y_LPARAM(lParam);
-   short deltaX = endX - begX;
-   m_RectStatic.bottom += deltaX;
-   m_RectEdit.top += deltaX; 
-   m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);
-   m_Edit.SetWindowPos(HWND_TOP, &m_RectEdit, 0);
-   ::ClipCursor(NULL);
-   ::ReleaseCapture();
+   //endX = GET_Y_LPARAM(lParam);
+   //short deltaX = endX - begX;
+   //m_RectStatic.bottom += deltaX;
+   //m_RectEdit.top += deltaX; 
+   //m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);
+   ////m_Edit.SetWindowPos(HWND_TOP, &m_RectEdit, 0);
+   //::ClipCursor(NULL);
+   //::ReleaseCapture();
    return 0;
 }
 

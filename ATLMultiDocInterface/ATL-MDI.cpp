@@ -17,8 +17,6 @@ namespace winrt
 	using namespace winrt::Microsoft::UI::Xaml::Markup;
 }
 
-//bool ProcessMessageForTabNavigation(const HWND topLevelWindow, MSG* msg);
-
 // Extra state for our top-level window, we point to from GWLP_USERDATA.
 struct WindowInfo
 {
@@ -48,6 +46,10 @@ bool ProcessMessageForTabNavigation(const HWND topLevelWindow, MSG* msg)
 		const HWND nextFocusedWindow = ::GetNextDlgTabItem(topLevelWindow, currentFocusedWindow, isShiftKeyDown /*bPrevious*/);
 
 		WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(topLevelWindow, GWLP_USERDATA));
+		if(__nullptr == windowInfo)
+		{
+			return false;
+		}
 		const HWND dwxsWindow = winrt::GetWindowFromWindowId(windowInfo->DesktopWindowXamlSource.SiteBridge().WindowId());
 		if(dwxsWindow == nextFocusedWindow)
 		{
@@ -96,7 +98,7 @@ LRESULT CATLMDIFrame::OnFileNew(WORD, WORD, HWND, BOOL&)
 		}
 		else
 		{
-			sTitle.Format(_T("%s%d"), m_sUntitled, m_vecMDIChildren.size());
+			sTitle.Format(_T("%s%d"), (LPCTSTR)m_sUntitled, m_vecMDIChildren.size());
 		}
 
 		pMDIChild->m_pfnSuperWindowProc = ::DefMDIChildProc;
@@ -114,7 +116,7 @@ LRESULT CATLMDIFrame::OnFileNew(WORD, WORD, HWND, BOOL&)
 					DrawMenuBar();
 				}
 			}
-         pMDIChild->m_Edit.SetFocus();
+         //pMDIChild->m_Edit.SetFocus();
 		}
 		else
 		{
@@ -297,7 +299,7 @@ LRESULT CALLBACK CATLMDIFrame::FrameWindowProc(HWND hWnd, UINT uMsg, WPARAM wPar
 		}
 	}
 
-	return ::DefFrameProc(thisFrame->m_hWnd, (NULL == thisFrame ? NULL : thisFrame->m_hMDIClient), uMsg, wParam, lParam);
+	return ::DefFrameProc(thisFrame->m_hWnd, thisFrame->m_hMDIClient, uMsg, wParam, lParam);
 }
 
 VOID CATLMDIFrame::CommandDispatch(WORD wCommand, HWND hwnd, BOOL& bHandled)
@@ -338,7 +340,7 @@ HRESULT CATLMDIModule::PreMessageLoop(int nCmdShow) throw()
 	HMENU hPaneMenu = ::LoadMenu(GetModuleHINSTANCE(), MAKEINTRESOURCE(IDR_PANE_MENU));
 	HICON hIcon = ::LoadIcon(GetModuleHINSTANCE(), MAKEINTRESOURCE(IDI_ATLMDI));
 	CString sTitle;
-	sTitle.LoadStringW(IDS_PROJNAME);
+	(void)sTitle.LoadStringW(IDS_PROJNAME);
 	m_pFrame->GetWndClassInfo().m_wc.hIcon = hIcon;
 	HWND hwndFrame = m_pFrame->Create(0, rcPos, sTitle, 0, 0, hMenu, hPaneMenu);//, m_pFrame);
 	if(__nullptr == hwndFrame)
@@ -347,53 +349,54 @@ HRESULT CATLMDIModule::PreMessageLoop(int nCmdShow) throw()
 	}
 	m_pFrame->m_hNoPaneMenu = hMenu;
 	m_pFrame->ShowWindow(nCmdShow);
-	m_pFrame->m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZENS));
+	m_pFrame->m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_ARROW));
    m_hAccelTable = LoadAccelerators(GetModuleHINSTANCE(), MAKEINTRESOURCE(IDR_ACCELERATOR1));
 	return hResult;
 }
 
 void CATLMDIModule::RunMessageLoop() throw()
 {
-	try
+	//try
+	//{ // Reminds me of the old FrzState.exe
+	//auto dispatcherQueueController{ winrt::DispatcherQueueController::CreateOnCurrentThread() };
+	m_DispatcherQueueController = winrt::DispatcherQueueController::CreateOnCurrentThread();
+	// Island-support: Create our custom Xaml App object. This is needed to properly use the controls and metadata
+	// in Microsoft.ui.xaml.controls.dll.
+	auto simpleIslandApp{ winrt::make<winrt::ATLMDI::implementation::App>() };
+
+	MSG msg = {};
+
+	while((GetMessage(&msg, 0, 0, 0) > 0))//WM_QUIT != msg.message
 	{
-		auto dispatcherQueueController{ winrt::DispatcherQueueController::CreateOnCurrentThread() };
-		// Island-support: Create our custom Xaml App object. This is needed to properly use the controls and metadata
-		// in Microsoft.ui.xaml.controls.dll.
-		auto simpleIslandApp{ winrt::make<winrt::ATLMDI::implementation::App>() };
-
-		MSG msg = {};
-
-		while((GetMessage(&msg, 0, 0, 0) > 0))//WM_QUIT != msg.message
+		if(!::TranslateMDISysAccel(m_pFrame->m_hMDIClient, &msg))
 		{
-			if(!::TranslateMDISysAccel(m_pFrame->m_hMDIClient, &msg))
+			if(::ContentPreTranslateMessage(&msg))
 			{
-				if(::ContentPreTranslateMessage(&msg))
-				{
-					continue;
-				}
-				if(::TranslateAccelerator(m_pFrame->m_hWnd, m_hAccelTable, &msg))
-				{
-					continue;
-				}
-
-				// Island-support: This is needed so that the user can correctly tab and shift+tab into islands.
-				if(ProcessMessageForTabNavigation(m_pFrame->m_hWnd, &msg))
-				{
-					continue;
-				}
-
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
+				continue;
 			}
-		}
+			if(::TranslateAccelerator(m_pFrame->m_hWnd, m_hAccelTable, &msg))
+			{
+				continue;
+			}
 
-		// Island-support: To properly shut down after using a DispatcherQueue, call ShutdownQueue[Aysnc]().
-		dispatcherQueueController.ShutdownQueue();
+			// Island-support: This is needed so that the user can correctly tab and shift+tab into islands.
+			if(ProcessMessageForTabNavigation(m_pFrame->m_hWnd, &msg))
+			{
+				continue;
+			}
+
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
+		}
 	}
-	catch(const winrt::hresult_error& exception)
-	{
-		int32_t iResult = exception.code().value;
-	}
+
+	// Island-support: To properly shut down after using a DispatcherQueue, call ShutdownQueue[Aysnc]().
+	m_DispatcherQueueController.ShutdownQueueAsync();
+	//}// Reminds me of the old FrzState.exe
+	//catch(const winrt::hresult_error& exception)
+	//{
+	//	int32_t iResult = exception.code().value;
+	//}
 }
 
 HRESULT CATLMDIModule::PostMessageLoop() throw()
@@ -413,11 +416,13 @@ CATLMDIModule _AtlModule;
 
 
 //
-extern "C" int WINAPI _tWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, 
-								LPTSTR /*lpCmdLine*/, int nShowCmd)
+extern "C" int WINAPI _tWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPTSTR /*lpCmdLine*/, int nShowCmd)
 {
-	//winrt::uninit_apartment();
-	winrt::init_apartment(winrt::apartment_type::single_threaded);//winrt::apartment_type::single_threaded
+	//winrt::uninit_apartment();// Not needed because line 16, pch.h - #define _ATL_NO_COM_SUPPORT
+	winrt::init_apartment(winrt::apartment_type::single_threaded);
+	// winrt::apartment_type::multi_threaded excepts at line 25333 of Microsoft.UI.XamlControls.h
+	// check_hresult(WINRT_IMPL_SHIM(winrt::Microsoft::UI::Xaml::Controls::IWebView2)->put_Source(*(void**)(&value)));
+	// even in the SimpleIslandApp, old school Win32 base, so it's not ATL related.
 
 	int iReturn = _AtlModule.WinMain(nShowCmd);
 

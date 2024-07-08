@@ -65,5 +65,9 @@ public:
 	HRESULT PreMessageLoop(int nCmdShow) throw();
 	void RunMessageLoop() throw();
 	HRESULT PostMessageLoop() throw();
+protected:
+	winrt::Microsoft::UI::Dispatching::DispatcherQueueController m_DispatcherQueueController{__nullptr};
+	// See: https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/consume-apis
+	// Search locallly for std::nullptr_t
 };
 
