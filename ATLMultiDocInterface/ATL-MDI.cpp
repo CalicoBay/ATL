@@ -116,7 +116,6 @@ LRESULT CATLMDIFrame::OnFileNew(WORD, WORD, HWND, BOOL&)
 					DrawMenuBar();
 				}
 			}
-         //pMDIChild->m_Edit.SetFocus();
 		}
 		else
 		{

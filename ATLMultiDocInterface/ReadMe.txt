@@ -105,3 +105,13 @@ ATL-MDIps.def
 
 //////Removed
 /////////////////////////////////////////////////////////////////////////////
+//2024-07-08
+This project has been altered to display XAML islands using C++/WinRT. The hyphen needed
+to be removed from the project name as the root namespace is the project name. Namespaces
+don't like hyphens, makes sense, after all it will be part of a variable identifier.
+
+Many things have changed and this project stills needs cleanup and more.
+
+The original from Team Foundation Server is downloaded as a zip in C:\Users\keesj\OneDrive\Code Samples\ATL.zip
+on this laptop. It was unzipped to \\OmenReDone\Z:\ATL which also has an explanatory text file, I believe.
+//2024-07-08

@@ -27,14 +27,12 @@ struct WindowInfo
 };
 
 CATLMDIChild::CATLMDIChild(void) : 
-   m_Edit(_T("Edit"), this, 1),
-   m_Static(_T("Edit"), this, 2),
+   m_Static(_T("Static"), this, 1),
+   m_RectStatic{},
    m_hwndFrame(0),
    m_pMDIFrame(__nullptr),
    m_hSplitCursor(__nullptr)
 {
-   ::memset(&m_RectStatic, 0, sizeof(RECT));
-   ::memset(&m_RectEdit, 0, sizeof(RECT));
    m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZENS));
    m_sContent = _T("TODO: Something with this space!");
    m_sStaticContent = _T("HWND hwndStatic = m_Static.Create(m_hWnd, rcStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY);");
@@ -68,17 +66,7 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
          m_RectStatic.right = rcClient.right;
          m_RectStatic.bottom = rcClient.bottom;//(rcClient.bottom - rcClient.top) / 2;
 
-         m_RectEdit.left = rcClient.left;
-         m_RectEdit.top = m_RectStatic.bottom + 5;
-         m_RectEdit.right = rcClient.right;
-         m_RectEdit.bottom = rcClient.bottom;
-
          HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic);// , _T("XamlSource"), WS_CHILD | WS_BORDER | WS_VISIBLE);// | WS_VSCROLL | ES_MULTILINE | ES_READONLY
-         //HWND hwndEdit = m_Edit.Create(m_hWnd, m_RectEdit, m_sContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE);
-         //if(0 != hwndEdit)
-         //{
-         //   m_Edit.SetFocus();
-         //}
          WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(hwndStatic, GWLP_USERDATA));
          windowInfo = new WindowInfo();
          ::SetWindowLongPtr(hwndStatic, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowInfo));
@@ -96,75 +84,21 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
 LRESULT CATLMDIChild::OnClearText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd, BOOL& /*bHandled*/)
 {
 	m_sContent.Empty();
-   //m_Edit.SendMessage(EM_SETSEL, 0, -1);
-   //m_Edit.SendMessage(EM_REPLACESEL, FALSE, (LPARAM)m_sContent.GetString());
-   //Invalidate();
 	return 0;
 }
 
 LRESULT CATLMDIChild::OnSetText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd, BOOL& /*bHandled*/)
 {
 	m_sContent = _T("TODO: We need to get some text from a TaskDialog for instance.");
-   //m_Edit.SendMessage(EM_SETSEL, 0, -1);
-   //m_Edit.SendMessage(EM_REPLACESEL, FALSE, (LPARAM)m_sContent.GetString());
-	//Invalidate();
 	return 0;
 }
-
-//LRESULT CATLMDIChild::OnPaint(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-//{
-//	//PAINTSTRUCT ps;
-//	//HDC hdc = GetDC();
-// //  RECT rectToPaint;
-// //  HRGN rgnToPaint;
-// //  rectToPaint.bottom = m_RectEdit.top;
-// //  rectToPaint.left = m_RectStatic.left;
-// //  rectToPaint.right = m_RectEdit.right;
-// //  rectToPaint.top = m_RectStatic.bottom;
-// //  rgnToPaint = ::CreateRectRgnIndirect(&rectToPaint);
-//	//BeginPaint(&ps);
-// //  ::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_ACTIVECAPTION));
-//	//EndPaint(&ps);
-//   //PAINTSTRUCT ps;
-//   //HDC hdc = GetDC();
-//   WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(m_Static, GWLP_USERDATA));
-//   //HRGN rgnToPaint = ::CreateRectRgnIndirect(&m_RectStatic);
-//   //BeginPaint(&ps);
-//   ////::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_WINDOW));
-//   //EndPaint(&ps);
-//   //if(__nullptr != windowInfo)
-//   //{
-//   //   if(windowInfo->DesktopWindowXamlSource)
-//   //   {
-//   //      windowInfo->DesktopWindowXamlSource.SiteBridge().MoveAndResize({ m_RectStatic.left, m_RectStatic.top, m_RectStatic.right, m_RectStatic.bottom });
-//   //      ++begX;
-//   //      CString sText;
-//   //      sText.Format(_T("Paint called %i times."), begX);
-//   //      SetWindowText((LPCTSTR)sText);
-//   //   }
-//   //}
-//
-//	return 0;
-//}
 
 LRESULT CATLMDIChild::OnSize(UINT, WPARAM, LPARAM, BOOL&)
 {
    WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(m_Static, GWLP_USERDATA));
    RECT rcClient;
    GetClientRect(&rcClient);
-   //m_RectStatic.left = m_RectEdit.left = rcClient.left;
-   //m_RectStatic.right = m_RectEdit.right = rcClient.right;
    m_RectStatic = rcClient;
-   //if(rcClient.bottom > (m_RectStatic.bottom + 150))
-   //{
-   //   m_RectEdit.bottom = rcClient.bottom;
-   //}
-   //else
-   //{
-   //   m_RectEdit.bottom = m_RectStatic.bottom + 150;
-   //}
-   //BOOL bHandled = TRUE;
-   //(void)OnPaint(0, 0, 0, bHandled);
    if(__nullptr != windowInfo)
    {
       if(windowInfo->DesktopWindowXamlSource)
@@ -178,49 +112,6 @@ LRESULT CATLMDIChild::OnSize(UINT, WPARAM, LPARAM, BOOL&)
    }
    m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);// , SWP_NOCOPYBITS | SWP_SHOWWINDOW);//SWP_NOCOPYBITS | SWP_NOZORDER | 
    //RedrawWindow(0, 0, RDW_ERASE | RDW_FRAME | RDW_INVALIDATE);
-   return 0;
-}
-
-LRESULT CATLMDIChild::OnMouseMove(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-   LRESULT lResult = 0;
-   //SHORT xPos = GET_X_LPARAM(lParam);
-   //SHORT yPos = GET_Y_LPARAM(lParam);
-   //if(MK_LBUTTON & wParam)
-   //{
-   //   //TRACKMOUSEEVENT tme;
-   //   //tme.cbSize = sizeof(tme);
-   //   //tme.dwFlags = TME_LEAVE;
-   //   //tme.hwndTrack = m_hWnd;
-   //   //::SetCursor(m_hSplitCursor);
-   //}
-   //::SetCursor(m_hSplitCursor);
-   return lResult;
-}
-
-LRESULT CATLMDIChild::OnLButtonDown(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-   //RECT rcClient;
-   //GetWindowRect(&rcClient);
-   //rcClient.top += 100;
-   //rcClient.bottom -= 150;
-   //::ClipCursor(&rcClient);
-   //begX = GET_Y_LPARAM(lParam);
-   //::SetCursor(m_hSplitCursor);
-   //::SetCapture(m_hWnd);
-   return 0;
-}
-
-LRESULT CATLMDIChild::OnLButtonUp(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-{
-   //endX = GET_Y_LPARAM(lParam);
-   //short deltaX = endX - begX;
-   //m_RectStatic.bottom += deltaX;
-   //m_RectEdit.top += deltaX; 
-   //m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);
-   ////m_Edit.SetWindowPos(HWND_TOP, &m_RectEdit, 0);
-   //::ClipCursor(NULL);
-   //::ReleaseCapture();
    return 0;
 }
 
