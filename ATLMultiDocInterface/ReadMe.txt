@@ -128,3 +128,5 @@ https://github.com/microsoftarchive/msdn-code-gallery-microsoft/tree/master Old 
 https://github.com/microsoftarchive/msdn-code-gallery-microsoft/tree/master/OneCodeTeam/Windows%20common%20controls%20demo%20(CppWindowsCommonControls)/%5BC%2B%2B%5D-Windows%20common%20controls%20demo%20(CppWindowsCommonControls)/C%2B%2B/CppWindowsCommonControls
 https://learn.microsoft.com/en-us/windows/win32/controls/individual-control-info
 //2024-07-08
+//2024-07-09
+https://learn.microsoft.com/en-us/uwp/cpp-ref-for-winrt/box-value
