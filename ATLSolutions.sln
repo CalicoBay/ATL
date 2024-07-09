@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.33214.272
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATLMultiDocEdit", "ATLMultiDocEdit\ATLMultiDocEdit.vcxproj", "{161AD5CA-963A-494B-A9BB-EE48781730B2}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATL-MDI", "ATLMultiDocInterface\ATL-MDI.vcxproj", "{012D2284-0EA4-4534-97BA-C0D90E085E30}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MultiRich", "MultiRich\MultiRich.vcxproj", "{85EB3E2A-280B-444D-944F-0E8FB9DA4E93}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATLSingleDocEdit", "ATLSingleDocEdit\ATLSingleDocEdit.vcxproj", "{E03E2819-25A1-4009-B89C-837E70A93C1B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATLMDI", "ATLMultiDocInterface\ATLMDI.vcxproj", "{012D2284-0EA4-4534-97BA-C0D90E085E30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,16 +31,6 @@ Global
 		{161AD5CA-963A-494B-A9BB-EE48781730B2}.Release|Win32.Build.0 = Release|Win32
 		{161AD5CA-963A-494B-A9BB-EE48781730B2}.Release|x64.ActiveCfg = Release|x64
 		{161AD5CA-963A-494B-A9BB-EE48781730B2}.Release|x64.Build.0 = Release|x64
-		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Debug|Win32.ActiveCfg = Debug|Win32
-		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Debug|x64.ActiveCfg = Debug|x64
-		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Debug|x64.Build.0 = Debug|x64
-		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|Mixed Platforms.Build.0 = Release|Win32
-		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|Win32.ActiveCfg = Release|Win32
-		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|Win32.Build.0 = Release|Win32
-		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|x64.ActiveCfg = Release|x64
-		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|x64.Build.0 = Release|x64
 		{85EB3E2A-280B-444D-944F-0E8FB9DA4E93}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{85EB3E2A-280B-444D-944F-0E8FB9DA4E93}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{85EB3E2A-280B-444D-944F-0E8FB9DA4E93}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -64,29 +54,23 @@ Global
 		{E03E2819-25A1-4009-B89C-837E70A93C1B}.Release|Win32.Build.0 = Release|Win32
 		{E03E2819-25A1-4009-B89C-837E70A93C1B}.Release|x64.ActiveCfg = Release|x64
 		{E03E2819-25A1-4009-B89C-837E70A93C1B}.Release|x64.Build.0 = Release|x64
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Debug|Win32.ActiveCfg = Debug|Win32
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Debug|Win32.Build.0 = Debug|Win32
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Debug|x64.ActiveCfg = Debug|x64
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Debug|x64.Build.0 = Debug|x64
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|Mixed Platforms.Build.0 = Release|x64
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|Win32.ActiveCfg = Release|Win32
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|Win32.Build.0 = Release|Win32
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|x64.ActiveCfg = Release|x64
+		{012D2284-0EA4-4534-97BA-C0D90E085E30}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CE9A9773-38CC-46D8-A41A-EDD658517E08}
-	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 5
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://dev.azure.com/calicobay
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = ATLMultiDocEdit\\ATLMultiDocEdit.vcxproj
-		SccProjectName1 = ATLMultiDocEdit
-		SccLocalPath1 = ATLMultiDocEdit
-		SccProjectUniqueName2 = ATLMultiDocInterface\\ATL-MDI.vcxproj
-		SccProjectName2 = ATLMultiDocInterface
-		SccLocalPath2 = ATLMultiDocInterface
-		SccProjectUniqueName3 = MultiRich\\MultiRich.vcxproj
-		SccProjectName3 = MultiRich
-		SccLocalPath3 = MultiRich
-		SccProjectUniqueName4 = ATLSingleDocEdit\\ATLSingleDocEdit.vcxproj
-		SccProjectName4 = ATLSingleDocEdit
-		SccLocalPath4 = ATLSingleDocEdit
 	EndGlobalSection
 EndGlobal
