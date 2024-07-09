@@ -4,8 +4,15 @@
 
 #include "MainPage.h"
 
-using namespace winrt;
-using namespace Microsoft::UI::Xaml;
+namespace winrt
+{
+	using namespace winrt::Microsoft::UI;
+	using namespace winrt::Microsoft::UI::Dispatching;
+	using namespace winrt::Microsoft::UI::Xaml;
+	using namespace winrt::Microsoft::UI::Xaml::Hosting;
+	using namespace winrt::Microsoft::UI::Xaml::Markup;
+   using namespace winrt::Windows::Foundation;
+}
 
 namespace winrt::ATLMDI::implementation
 {
@@ -21,6 +28,16 @@ namespace winrt::ATLMDI::implementation
 
     void MainPage::ClickHandler(IInspectable const&, RoutedEventArgs const&)
     {
-        Button().Content(box_value(L"Clicked"));
+      try
+      {
+         Uri targetUri(addressBar().Text());
+         OurWeb().Source(targetUri);
+      }
+      catch(const winrt::hresult_error& exception)
+      {
+         CString sTryAgain;
+         sTryAgain.Format(_T("%s Try again"), exception.message().c_str());
+         addressBar().Text((LPCTSTR)sTryAgain);
+      }
     }
 }

@@ -27,7 +27,7 @@ struct WindowInfo
 };
 
 CATLMDIChild::CATLMDIChild(void) : 
-   m_Static(_T("Static"), this, 1),
+   m_Static(_T("Static"), this),// , 1),// Now defaults to 0 re: //ALT_MSG_MAP(1) now commented out
    m_RectStatic{},
    m_hwndFrame(0),
    m_pMDIFrame(__nullptr),

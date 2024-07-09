@@ -20,8 +20,8 @@ public:
 		COMMAND_ID_HANDLER(ID_SET_TEXT, OnSetText)
 		MESSAGE_HANDLER(WM_CREATE, OnCreate)
       MESSAGE_HANDLER(WM_SIZE, OnSize)
-      ALT_MSG_MAP(1)
-      ALT_MSG_MAP(2)
+      //ALT_MSG_MAP(1) // I think these were necessary when CContainedWindow had window class "Edit"
+      //ALT_MSG_MAP(2)
 	END_MSG_MAP()
 	LRESULT OnClearText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd, BOOL& /*bHandled*/);//WORD, WORD, HWND, BOOL&
 	LRESULT OnSetText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd, BOOL& /*bHandled*/);
