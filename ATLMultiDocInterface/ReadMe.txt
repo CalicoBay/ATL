@@ -130,3 +130,7 @@ https://learn.microsoft.com/en-us/windows/win32/controls/individual-control-info
 //2024-07-08
 //2024-07-09
 https://learn.microsoft.com/en-us/uwp/cpp-ref-for-winrt/box-value
+//2024-07-10
+bool bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Pointer);
+bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Keyboard);
+bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Programmatic);
