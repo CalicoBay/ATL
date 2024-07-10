@@ -22,10 +22,6 @@
     <ProjectGuid>{85EB3E2A-280B-444D-944F-0E8FB9DA4E93}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>MultiRich</RootNamespace>
-    <SccProjectName>SAK</SccProjectName>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccProvider>SAK</SccProvider>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

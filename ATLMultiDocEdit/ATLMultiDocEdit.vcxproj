@@ -22,10 +22,6 @@
     <ProjectGuid>{161AD5CA-963A-494B-A9BB-EE48781730B2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ATLMultiDocEdit</RootNamespace>
-    <SccProjectName>SAK</SccProjectName>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccProvider>SAK</SccProvider>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
