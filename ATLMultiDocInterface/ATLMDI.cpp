@@ -29,48 +29,57 @@ struct WindowInfo
 // Intended to be called from the main message loop.
 bool ProcessMessageForTabNavigation(const HWND topLevelWindow, MSG* msg)
 {
-	if(msg->message == WM_KEYDOWN && msg->wParam == VK_TAB)
+	if(__nullptr != topLevelWindow)
 	{
-		// The user is pressing the "tab" key.  We want to handle this ourselves so we can pass information into Xaml
-		// about the tab navigation.  Specifically, we need to tell Xaml whether this is a forward tab, or a backward
-		// shift+tab, so Xaml will know whether to put focus on the first Xaml element in the island or the last
-		// Xaml element.  (This is done in the call to DesktopWindowXamlSource.NavigateFocus()).
-		const HWND currentFocusedWindow = ::GetFocus();
-		if(::GetAncestor(currentFocusedWindow, GA_ROOT) != topLevelWindow)
+		if(msg->message == WM_KEYDOWN && msg->wParam == VK_TAB)
 		{
-			// This is a window outside of our top-level window, let the system process it.
-			return false;
-		}
+			// The user is pressing the "tab" key.  We want to handle this ourselves so we can pass information into Xaml
+			// about the tab navigation.  Specifically, we need to tell Xaml whether this is a forward tab, or a backward
+			// shift+tab, so Xaml will know whether to put focus on the first Xaml element in the island or the last
+			// Xaml element.  (This is done in the call to DesktopWindowXamlSource.NavigateFocus()).
+			const HWND currentFocusedWindow = ::GetFocus();
+			const HWND hwndAncestor = ::GetAncestor(currentFocusedWindow, GA_ROOT);
+			if(hwndAncestor != topLevelWindow)
+			{
+				// This is a window outside of our top-level window, let the system process it.
+				return false;
+			}
 
-		const bool isShiftKeyDown = ((HIWORD(::GetKeyState(VK_SHIFT)) & 0x8000) != 0);
-		const HWND nextFocusedWindow = ::GetNextDlgTabItem(topLevelWindow, currentFocusedWindow, isShiftKeyDown /*bPrevious*/);
-
-		WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(topLevelWindow, GWLP_USERDATA));
-		if(__nullptr == windowInfo)
-		{
-			return false;
-		}
-		const HWND dwxsWindow = winrt::GetWindowFromWindowId(windowInfo->DesktopWindowXamlSource.SiteBridge().WindowId());
+			const bool isShiftKeyDown = ((HIWORD(::GetKeyState(VK_SHIFT)) & 0x8000) != 0);
+			const HWND nextFocusedWindow = ::GetNextDlgTabItem(topLevelWindow, currentFocusedWindow, isShiftKeyDown /*bPrevious*/);
+			WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(nextFocusedWindow, GWLP_USERDATA));
+			if(__nullptr == windowInfo)
+			{
+				return false;
+			}
+			const HWND dwxsWindow = winrt::GetWindowFromWindowId(windowInfo->DesktopWindowXamlSource.SiteBridge().WindowId());
 		if(dwxsWindow == nextFocusedWindow)
-		{
-			// Focus is moving to our DesktopWindowXamlSource.  Instead of just calling SetFocus on it, we call NavigateFocus(),
-			// which allows us to tell Xaml which direction the keyboard focus is moving.
-			// If your app has multiple DesktopWindowXamlSources in the window, you'll want to loop over them and check to
-			// see if focus is moving to each one.
-			winrt::XamlSourceFocusNavigationRequest request{
-				 isShiftKeyDown ?
-					  winrt::XamlSourceFocusNavigationReason::Last :
-					  winrt::XamlSourceFocusNavigationReason::First };
+			{
+				// Focus is moving to our DesktopWindowXamlSource.  Instead of just calling SetFocus on it, we call NavigateFocus(),
+				// which allows us to tell Xaml which direction the keyboard focus is moving.
+				// If your app has multiple DesktopWindowXamlSources in the window, you'll want to loop over them and check to
+				// see if focus is moving to each one.
+				winrt::XamlSourceFocusNavigationRequest request{
+					 isShiftKeyDown ?
+						  winrt::XamlSourceFocusNavigationReason::Last :
+						  winrt::XamlSourceFocusNavigationReason::First };
 
-			windowInfo->DesktopWindowXamlSource.NavigateFocus(request);
-			return true;
+				windowInfo->DesktopWindowXamlSource.NavigateFocus(request);
+				//bool bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Pointer);
+				//bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Keyboard);
+				//bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Programmatic);
+				//bool bHasFocus = windowInfo->DesktopWindowXamlSource.HasFocus();
+				//return bHasFocus;
+				return true;
+			}
+
+			// Focus isn't moving to our DesktopWindowXamlSource.  IsDialogMessage will automatically do the tab navigation
+			// for us for this msg.
+			const bool handled = (::IsDialogMessage(topLevelWindow, msg) == TRUE);
+			return handled;
 		}
-
-		// Focus isn't moving to our DesktopWindowXamlSource.  IsDialogMessage will automatically do the tab navigation
-		// for us for this msg.
-		const bool handled = (::IsDialogMessage(topLevelWindow, msg) == TRUE);
-		return handled;
 	}
+
 	return false;
 }
 
@@ -378,6 +387,20 @@ void CATLMDIModule::RunMessageLoop() throw()
 				continue;
 			}
 
+			//HWND hwndActive = HWND(::SendMessage(m_pFrame->m_hMDIClient, WM_MDIGETACTIVE, 0, 0));
+			//HWND hwndContained = __nullptr;
+			//if(__nullptr != hwndActive)
+			//{
+			//	std::vector<CATLMDIChild*>::iterator itVec;
+			//	for(itVec = m_pFrame->m_vecMDIChildren.begin(); itVec != m_pFrame->m_vecMDIChildren.end(); ++itVec)
+			//	{
+			//		CATLMDIChild* thisChild = *itVec;
+			//		if(hwndActive == thisChild->m_hWnd)
+			//		{
+			//			hwndContained = thisChild->m_Static.m_hWnd;
+			//		}
+			//	}
+			//}
 			// Island-support: This is needed so that the user can correctly tab and shift+tab into islands.
 			if(ProcessMessageForTabNavigation(m_pFrame->m_hWnd, &msg))
 			{

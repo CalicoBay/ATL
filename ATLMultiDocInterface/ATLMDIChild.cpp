@@ -29,9 +29,10 @@ struct WindowInfo
 CATLMDIChild::CATLMDIChild(void) : 
    m_Static(_T("Static"), this),// , 1),// Now defaults to 0 re: //ALT_MSG_MAP(1) now commented out
    m_RectStatic{},
-   m_hwndFrame(0),
+   m_hwndFrame(__nullptr),
    m_pMDIFrame(__nullptr),
-   m_hSplitCursor(__nullptr)
+   m_hSplitCursor(__nullptr),
+   m_bActivated(false)
 {
    m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZENS));
    m_sContent = _T("TODO: Something with this space!");
@@ -69,6 +70,7 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
          HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic);// , _T("XamlSource"), WS_CHILD | WS_BORDER | WS_VISIBLE);// | WS_VSCROLL | ES_MULTILINE | ES_READONLY
          if(__nullptr != hwndStatic)
          {
+            //BOOL bModifiedStyle = m_Static.ModifyStyle(0, WS_TABSTOP);
             WindowInfo* windowInfo = new WindowInfo();
             if(__nullptr != windowInfo)
             {
@@ -84,6 +86,20 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
 	}
 
 	return 0;
+}
+
+LRESULT CATLMDIChild::OnMDIActivate(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+   if(HWND(lParam) == m_hWnd)
+   {
+      m_bActivated = true;
+      //::SetFocus(m_Static.m_hWnd);
+   }
+   else if(HWND(wParam) == m_hWnd)
+   {
+      m_bActivated = false;
+   }
+   return 0;
 }
 
 LRESULT CATLMDIChild::OnClearText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd, BOOL& /*bHandled*/)
