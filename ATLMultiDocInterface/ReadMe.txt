@@ -134,3 +134,8 @@ https://learn.microsoft.com/en-us/uwp/cpp-ref-for-winrt/box-value
 bool bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Pointer);
 bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Keyboard);
 bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Programmatic);
+//The above now commented in ATLMDI.cpp line 68+
+https://github.com/microsoft/Xaml-Islands-Samples.git even has a MFC among others, might be 3 years old.
+https://github.com/microsoft/Xaml-Islands-Samples/tree/master/Samples/Win32/SampleCppApp a different approach 
+than SimpleIslandApp which is in https://github.com/microsoft/WindowsAppSDK-Samples.git. SimpleIslandApp does some 
+stuff that I haven't implemented yet which might be key. Check out WM_CREATE line 223 in SimpleIslandApp.cpp.
