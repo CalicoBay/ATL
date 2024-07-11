@@ -17,19 +17,11 @@ namespace winrt
 	using namespace winrt::Microsoft::UI::Xaml::Markup;
 }
 
-// Extra state for our top-level window, we point to from GWLP_USERDATA.
-struct WindowInfo
-{
-	winrt::DesktopWindowXamlSource DesktopWindowXamlSource{ nullptr };
-	winrt::event_token TakeFocusRequestedToken{};
-	HWND LastFocusedWindow{ NULL };
-};
-
 // Returns "true" if the function handled the message and it shouldn't be processed any further.
 // Intended to be called from the main message loop.
-bool ProcessMessageForTabNavigation(const HWND topLevelWindow, MSG* msg)
+bool ProcessMessageForTabNavigation(const CATLMDIChild* pActiveChild, MSG* msg)
 {
-	if(__nullptr != topLevelWindow)
+	if(__nullptr != pActiveChild)
 	{
 		if(msg->message == WM_KEYDOWN && msg->wParam == VK_TAB)
 		{
@@ -38,22 +30,27 @@ bool ProcessMessageForTabNavigation(const HWND topLevelWindow, MSG* msg)
 			// shift+tab, so Xaml will know whether to put focus on the first Xaml element in the island or the last
 			// Xaml element.  (This is done in the call to DesktopWindowXamlSource.NavigateFocus()).
 			const HWND currentFocusedWindow = ::GetFocus();
-			const HWND hwndAncestor = ::GetAncestor(currentFocusedWindow, GA_ROOT);
-			if(hwndAncestor != topLevelWindow)
+			const HWND hwndAncestor = ::GetAncestor(pActiveChild->m_Static.m_hWnd, GA_PARENT);//was currentFocusedWindow then hwndMDIGETACTIVE
+			// hwndAncestor with GA_ROOT here is the Module's frame window handle!
+			if(hwndAncestor != pActiveChild->m_hWnd)
 			{
-				// This is a window outside of our top-level window, let the system process it.
+				// This is a window outside of this child's frame, let the system process it.
 				return false;
 			}
 
+			HWND dwxsWindow = __nullptr;
 			const bool isShiftKeyDown = ((HIWORD(::GetKeyState(VK_SHIFT)) & 0x8000) != 0);
-			const HWND nextFocusedWindow = ::GetNextDlgTabItem(topLevelWindow, currentFocusedWindow, isShiftKeyDown /*bPrevious*/);
-			WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(nextFocusedWindow, GWLP_USERDATA));
-			if(__nullptr == windowInfo)
+
+			if(__nullptr == pActiveChild->m_pWindowInfo)
 			{
 				return false;
 			}
-			const HWND dwxsWindow = winrt::GetWindowFromWindowId(windowInfo->DesktopWindowXamlSource.SiteBridge().WindowId());
-		if(dwxsWindow == nextFocusedWindow)
+			else
+			{
+				dwxsWindow = winrt::GetWindowFromWindowId(pActiveChild->m_pWindowInfo->DesktopWindowXamlSource.SiteBridge().WindowId());
+			}
+
+			if(pActiveChild->m_hWnd == currentFocusedWindow)
 			{
 				// Focus is moving to our DesktopWindowXamlSource.  Instead of just calling SetFocus on it, we call NavigateFocus(),
 				// which allows us to tell Xaml which direction the keyboard focus is moving.
@@ -64,7 +61,7 @@ bool ProcessMessageForTabNavigation(const HWND topLevelWindow, MSG* msg)
 						  winrt::XamlSourceFocusNavigationReason::Last :
 						  winrt::XamlSourceFocusNavigationReason::First };
 
-				windowInfo->DesktopWindowXamlSource.NavigateFocus(request);
+				pActiveChild->m_pWindowInfo->DesktopWindowXamlSource.NavigateFocus(request);
 				//bool bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Pointer);
 				//bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Keyboard);
 				//bFocusSet = windowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Programmatic);
@@ -75,7 +72,7 @@ bool ProcessMessageForTabNavigation(const HWND topLevelWindow, MSG* msg)
 
 			// Focus isn't moving to our DesktopWindowXamlSource.  IsDialogMessage will automatically do the tab navigation
 			// for us for this msg.
-			const bool handled = (::IsDialogMessage(topLevelWindow, msg) == TRUE);
+			const bool handled = (::IsDialogMessage(pActiveChild->m_Static.m_hWnd, msg) == TRUE);
 			return handled;
 		}
 	}
@@ -370,7 +367,7 @@ void CATLMDIModule::RunMessageLoop() throw()
 	m_DispatcherQueueController = winrt::DispatcherQueueController::CreateOnCurrentThread();
 	// Island-support: Create our custom Xaml App object. This is needed to properly use the controls and metadata
 	// in Microsoft.ui.xaml.controls.dll.
-	auto simpleIslandApp{ winrt::make<winrt::ATLMDI::implementation::App>() };
+	m_XamlApp = winrt::make<winrt::ATLMDI::implementation::App>();
 
 	MSG msg = {};
 
@@ -387,22 +384,23 @@ void CATLMDIModule::RunMessageLoop() throw()
 				continue;
 			}
 
-			//HWND hwndActive = HWND(::SendMessage(m_pFrame->m_hMDIClient, WM_MDIGETACTIVE, 0, 0));
-			//HWND hwndContained = __nullptr;
-			//if(__nullptr != hwndActive)
-			//{
-			//	std::vector<CATLMDIChild*>::iterator itVec;
-			//	for(itVec = m_pFrame->m_vecMDIChildren.begin(); itVec != m_pFrame->m_vecMDIChildren.end(); ++itVec)
-			//	{
-			//		CATLMDIChild* thisChild = *itVec;
-			//		if(hwndActive == thisChild->m_hWnd)
-			//		{
-			//			hwndContained = thisChild->m_Static.m_hWnd;
-			//		}
-			//	}
-			//}
+			HWND hwndActive = HWND(::SendMessage(m_pFrame->m_hMDIClient, WM_MDIGETACTIVE, 0, 0));
+			CATLMDIChild* pActiveChild = __nullptr;
+			if(__nullptr != hwndActive)
+			{
+				std::vector<CATLMDIChild*>::iterator itVec;
+				for(itVec = m_pFrame->m_vecMDIChildren.begin(); itVec != m_pFrame->m_vecMDIChildren.end(); ++itVec)
+				{
+					CATLMDIChild* pThisChild = *itVec;
+					if(hwndActive == pThisChild->m_hWnd)
+					{
+						pActiveChild = pThisChild;
+						break;
+					}
+				}
+			}
 			// Island-support: This is needed so that the user can correctly tab and shift+tab into islands.
-			if(ProcessMessageForTabNavigation(m_pFrame->m_hWnd, &msg))
+			if(ProcessMessageForTabNavigation(pActiveChild, &msg))
 			{
 				continue;
 			}

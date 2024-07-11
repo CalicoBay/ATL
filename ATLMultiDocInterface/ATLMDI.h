@@ -68,5 +68,6 @@ protected:
 	winrt::Microsoft::UI::Dispatching::DispatcherQueueController m_DispatcherQueueController{__nullptr};
 	// See: https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/consume-apis
 	// Search locallly for std::nullptr_t
+	winrt::Microsoft::UI::Xaml::Application m_XamlApp{__nullptr};
 };
 

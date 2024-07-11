@@ -18,19 +18,12 @@ namespace winrt
 static uint32_t begX = 0;
 static short endX = 0;
 
-// Extra state for our top-level window, we point to from GWLP_USERDATA.
-struct WindowInfo
-{
-   winrt::DesktopWindowXamlSource DesktopWindowXamlSource{ nullptr };
-   winrt::event_token TakeFocusRequestedToken{};
-   HWND LastFocusedWindow{ NULL };
-};
-
 CATLMDIChild::CATLMDIChild(void) : 
    m_Static(_T("Static"), this),// , 1),// Now defaults to 0 re: //ALT_MSG_MAP(1) now commented out
    m_RectStatic{},
    m_hwndFrame(__nullptr),
    m_pMDIFrame(__nullptr),
+   m_pWindowInfo(__nullptr),
    m_hSplitCursor(__nullptr),
    m_bActivated(false)
 {
@@ -67,19 +60,42 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
          m_RectStatic.right = rcClient.right;
          m_RectStatic.bottom = rcClient.bottom;//(rcClient.bottom - rcClient.top) / 2;
 
+         HWND hwndFrame = m_hwndFrame;
          HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic);// , _T("XamlSource"), WS_CHILD | WS_BORDER | WS_VISIBLE);// | WS_VSCROLL | ES_MULTILINE | ES_READONLY
          if(__nullptr != hwndStatic)
          {
             //BOOL bModifiedStyle = m_Static.ModifyStyle(0, WS_TABSTOP);
-            WindowInfo* windowInfo = new WindowInfo();
-            if(__nullptr != windowInfo)
+            m_pWindowInfo = new WindowInfo();
+            if(__nullptr != m_pWindowInfo)
             {
-               ::SetWindowLongPtr(hwndStatic, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowInfo));
+               //::SetWindowLongPtr(hwndStatic, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(m_pWindowInfo));
                // Create our DesktopWindowXamlSource and attach it to our hwnd.  This is our "island".
-               windowInfo->DesktopWindowXamlSource = winrt::DesktopWindowXamlSource{};
-               windowInfo->DesktopWindowXamlSource.Initialize(winrt::GetWindowIdFromWindow(hwndStatic));
+               m_pWindowInfo->DesktopWindowXamlSource = winrt::DesktopWindowXamlSource{};
+               m_pWindowInfo->DesktopWindowXamlSource.Initialize(winrt::GetWindowIdFromWindow(hwndStatic));
+
+               // Enable the DesktopWindowXamlSource to be a tab stop.
+               HWND hwndXamlIsland = winrt::GetWindowFromWindowId(m_pWindowInfo->DesktopWindowXamlSource.SiteBridge().WindowId());
+               ::SetWindowLong(hwndXamlIsland, GWL_STYLE, WS_TABSTOP | WS_CHILD | WS_VISIBLE);
+
                // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
-               windowInfo->DesktopWindowXamlSource.Content(winrt::make<winrt::ATLMDI::implementation::MainPage>());
+               m_pWindowInfo->DesktopWindowXamlSource.Content(winrt::make<winrt::ATLMDI::implementation::MainPage>());
+
+               // Subscribe to the TakeFocusRequested event, which will be raised when Xaml wants to move keyboard focus back to our window.
+               m_pWindowInfo->TakeFocusRequestedToken = m_pWindowInfo->DesktopWindowXamlSource.TakeFocusRequested(
+                  [hwndStatic](winrt::DesktopWindowXamlSource const& /*sender*/, winrt::DesktopWindowXamlSourceTakeFocusRequestedEventArgs const& args) {
+                     if(args.Request().Reason() == winrt::XamlSourceFocusNavigationReason::First)
+                     {
+                        // The reason "First" means the user is tabbing forward, so put the focus on the button in the tab order
+                        // after the DesktopWindowXamlSource.
+                        ::SetFocus(hwndStatic);
+                     }
+                     else if(args.Request().Reason() == winrt::XamlSourceFocusNavigationReason::Last)
+                     {
+                        // The reason "Last" means the user is tabbing backward (shift-tab, so put the focus on button prior to
+                        // the DesktopWindowXamlSource.
+                        ::SetFocus(hwndStatic);
+                     }
+                  });
             }
          }
       }
@@ -93,11 +109,28 @@ LRESULT CATLMDIChild::OnMDIActivate(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam,
    if(HWND(lParam) == m_hWnd)
    {
       m_bActivated = true;
-      //::SetFocus(m_Static.m_hWnd);
+      m_pWindowInfo->LastFocusedWindow = ::GetFocus();
    }
    else if(HWND(wParam) == m_hWnd)
    {
       m_bActivated = false;
+      ::SetFocus(m_pWindowInfo->LastFocusedWindow);
+   }
+   return 0;
+}
+
+LRESULT CATLMDIChild::OnNcDestroy(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+   if(__nullptr != m_pWindowInfo)
+   {
+      if((m_pWindowInfo->DesktopWindowXamlSource) && (0 != m_pWindowInfo->TakeFocusRequestedToken.value))
+      {
+         m_pWindowInfo->DesktopWindowXamlSource.TakeFocusRequested(m_pWindowInfo->TakeFocusRequestedToken);
+         m_pWindowInfo->TakeFocusRequestedToken = {};
+      }
+      delete m_pWindowInfo;
+      m_pWindowInfo = __nullptr;
+      //m_Static.SetWindowLongPtr(GWLP_USERDATA, reinterpret_cast<LONG_PTR>(m_pWindowInfo));
    }
    return 0;
 }
@@ -116,15 +149,15 @@ LRESULT CATLMDIChild::OnSetText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd,
 
 LRESULT CATLMDIChild::OnSize(UINT, WPARAM, LPARAM, BOOL&)
 {
-   WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(m_Static, GWLP_USERDATA));
+   //WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(m_Static, GWLP_USERDATA));
    RECT rcClient;
    GetClientRect(&rcClient);
    m_RectStatic = rcClient;
-   if(__nullptr != windowInfo)
+   if(__nullptr != m_pWindowInfo)
    {
-      if(windowInfo->DesktopWindowXamlSource)
+      if(m_pWindowInfo->DesktopWindowXamlSource)
       {
-         windowInfo->DesktopWindowXamlSource.SiteBridge().MoveAndResize({ rcClient.left, rcClient.top, rcClient.right, rcClient.bottom });
+         m_pWindowInfo->DesktopWindowXamlSource.SiteBridge().MoveAndResize({ rcClient.left, rcClient.top, rcClient.right, rcClient.bottom });
          ++begX;
          CString sText;
          sText.Format(_T("MoveAndResize called %i times."), begX);
