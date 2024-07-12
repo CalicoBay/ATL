@@ -15,8 +15,8 @@ namespace winrt
 }
 
 
-static uint32_t begX = 0;
-static short endX = 0;
+//static uint32_t begX = 0;
+//static short endX = 0;
 
 CATLMDIChild::CATLMDIChild(void) : 
    m_Static(_T("Static"), this),// , 1),// Now defaults to 0 re: //ALT_MSG_MAP(1) now commented out
@@ -28,8 +28,8 @@ CATLMDIChild::CATLMDIChild(void) :
    m_bActivated(false)
 {
    m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZENS));
-   m_sContent = _T("TODO: Something with this space!");
-   m_sStaticContent = _T("HWND hwndStatic = m_Static.Create(m_hWnd, rcStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY);");
+   m_sContent = _T("https://learn.microsoft.com/en-gb/windows/apps/desktop/");
+   m_sStaticContent = _T("https://learn.microsoft.com/en-gb/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/migrate-to-windows-app-sdk-ovw");
 }
 
 
@@ -77,7 +77,9 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
                ::SetWindowLong(hwndXamlIsland, GWL_STYLE, WS_TABSTOP | WS_CHILD | WS_VISIBLE);
 
                // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
-               m_pWindowInfo->DesktopWindowXamlSource.Content(winrt::make<winrt::ATLMDI::implementation::MainPage>());
+               winrt::ATLMDI::MainPage mainPage(winrt::make<winrt::ATLMDI::implementation::MainPage>());
+               //mainPage.GetSource();
+               m_pWindowInfo->DesktopWindowXamlSource.Content(mainPage);
 
                // Subscribe to the TakeFocusRequested event, which will be raised when Xaml wants to move keyboard focus back to our window.
                m_pWindowInfo->TakeFocusRequestedToken = m_pWindowInfo->DesktopWindowXamlSource.TakeFocusRequested(
@@ -155,10 +157,10 @@ LRESULT CATLMDIChild::OnSize(UINT, WPARAM, LPARAM, BOOL&)
       if(m_pWindowInfo->DesktopWindowXamlSource)
       {
          m_pWindowInfo->DesktopWindowXamlSource.SiteBridge().MoveAndResize({ rcClient.left, rcClient.top, rcClient.right, rcClient.bottom });
-         ++begX;
-         CString sText;
-         sText.Format(_T("MoveAndResize called %i times."), begX);
-         SetWindowText((LPCTSTR)sText);
+         //++begX;
+         //CString sText;
+         //sText.Format(_T("MoveAndResize called %i times."), begX);
+         //SetWindowText((LPCTSTR)sText);
       }
    }
    m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);// , SWP_NOCOPYBITS | SWP_SHOWWINDOW);//SWP_NOCOPYBITS | SWP_NOZORDER | 

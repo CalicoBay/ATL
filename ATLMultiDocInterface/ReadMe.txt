@@ -139,3 +139,11 @@ https://github.com/microsoft/Xaml-Islands-Samples.git even has a MFC among other
 https://github.com/microsoft/Xaml-Islands-Samples/tree/master/Samples/Win32/SampleCppApp a different approach 
 than SimpleIslandApp which is in https://github.com/microsoft/WindowsAppSDK-Samples.git. SimpleIslandApp does some 
 stuff that I haven't implemented yet which might be key. Check out WM_CREATE line 223 in SimpleIslandApp.cpp.
+//2024-07-12
+https://learn.microsoft.com/en-gb/windows/apps/desktop/
+https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/author-apis
+From https://devblogs.microsoft.com/visualstudio/dive-into-native-windows-development-with-new-winui-workload-and-template-improvements/
+which I got from the latest Visual Studio Installer,
+we get https://aka.ms/windev and https://learn.microsoft.com/windows/apps/get-started/start-here
+from there https://learn.microsoft.com/en-us/windows/apps/desktop/?source=recommendations which contains the above among others.
+The aka above leads to https://developer.microsoft.com/en-us/windows/develop/ which is a nice splash for development.

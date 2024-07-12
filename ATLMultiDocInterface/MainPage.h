@@ -16,6 +16,7 @@ namespace winrt::ATLMDI::implementation
 
         int32_t MyProperty();
         void MyProperty(int32_t value);
+        winrt::Windows::Foundation::Uri GetSource();
 
         void ClickHandler(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& args);
     };
