@@ -1,17 +1,17 @@
 #pragma once
 class CATLMDIFrame;
 
-// Extra state for our top-level window, we point to from GWLP_USERDATA.
-struct WindowInfo
-{
-	winrt::Microsoft::UI::Xaml::Hosting::DesktopWindowXamlSource DesktopWindowXamlSource{ nullptr };
-	winrt::event_token TakeFocusRequestedToken{};
-	HWND LastFocusedWindow{ NULL };
-};
-
 
 class CATLMDIChild : public CWindowImpl<CATLMDIChild, CWindow, CMDIChildWinTraits>
 {
+	// Xaml island state.
+	struct WindowInfo
+	{
+		winrt::Microsoft::UI::Xaml::Hosting::DesktopWindowXamlSource DesktopWindowXamlSource{ nullptr };
+		winrt::event_token TakeFocusRequestedToken{};
+		HWND LastFocusedWindow{ NULL };
+	};
+
 public:
 	CATLMDIChild();
 	~CATLMDIChild();

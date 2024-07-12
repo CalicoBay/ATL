@@ -68,8 +68,7 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
             m_pWindowInfo = new WindowInfo();
             if(__nullptr != m_pWindowInfo)
             {
-               //::SetWindowLongPtr(hwndStatic, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(m_pWindowInfo));
-               // Create our DesktopWindowXamlSource and attach it to our hwnd.  This is our "island".
+               // Create our DesktopWindowXamlSource and save it to our WindowInfo.  This is our "island".
                m_pWindowInfo->DesktopWindowXamlSource = winrt::DesktopWindowXamlSource{};
                m_pWindowInfo->DesktopWindowXamlSource.Initialize(winrt::GetWindowIdFromWindow(hwndStatic));
 
@@ -130,7 +129,6 @@ LRESULT CATLMDIChild::OnNcDestroy(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lPa
       }
       delete m_pWindowInfo;
       m_pWindowInfo = __nullptr;
-      //m_Static.SetWindowLongPtr(GWLP_USERDATA, reinterpret_cast<LONG_PTR>(m_pWindowInfo));
    }
    return 0;
 }
@@ -149,7 +147,6 @@ LRESULT CATLMDIChild::OnSetText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd,
 
 LRESULT CATLMDIChild::OnSize(UINT, WPARAM, LPARAM, BOOL&)
 {
-   //WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(m_Static, GWLP_USERDATA));
    RECT rcClient;
    GetClientRect(&rcClient);
    m_RectStatic = rcClient;

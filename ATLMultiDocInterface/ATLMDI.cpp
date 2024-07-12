@@ -218,13 +218,10 @@ LRESULT CALLBACK CATLMDIFrame::FrameWindowProc(HWND hWnd, UINT uMsg, WPARAM wPar
 				return -1;
 			}
 			
-			//::SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)thisFrame);
-			
 			break;
 		}
     case WM_NCDESTROY:
 		{
-			//::SetWindowLongPtr(hWnd, GWLP_USERDATA, NULL);
 			LONG_PTR pWndProc = ::GetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC);
 			LRESULT lResult = ::DefFrameProc(thisFrame->m_hWnd, thisFrame->m_hMDIClient, uMsg, wParam, lParam);
 			if(thisFrame->m_pfnSuperWindowProc != ::DefWindowProc && ::GetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC) == pWndProc)
