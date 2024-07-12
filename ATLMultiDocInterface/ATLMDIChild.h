@@ -43,5 +43,6 @@ public:
 	LRESULT OnSize(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
    VOID OnFinalMessage(HWND /*hwnd*/);
 	WindowInfo* m_pWindowInfo;
+	winrt::ATLMDI::MainPage m_MainPage{ __nullptr };
 };
 

@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "ATLMDIChild.h"
 #include "ATLMDI.h"
 #include <App.xaml.h>
 #include <MainPage.h>
+#include "ATLMDIChild.h"
 #include <Microsoft.UI.Dispatching.Interop.h> // For ContentPreTranslateMessage
 
 namespace winrt
@@ -12,6 +12,7 @@ namespace winrt
    using namespace winrt::Microsoft::UI::Xaml;
    using namespace winrt::Microsoft::UI::Xaml::Hosting;
    using namespace winrt::Microsoft::UI::Xaml::Markup;
+   using namespace winrt::Windows::Foundation;
 }
 
 
@@ -77,9 +78,20 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
                ::SetWindowLong(hwndXamlIsland, GWL_STYLE, WS_TABSTOP | WS_CHILD | WS_VISIBLE);
 
                // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
-               winrt::ATLMDI::MainPage mainPage(winrt::make<winrt::ATLMDI::implementation::MainPage>());
-               //mainPage.GetSource();
-               m_pWindowInfo->DesktopWindowXamlSource.Content(mainPage);
+               m_MainPage = winrt::make<winrt::ATLMDI::implementation::MainPage>();
+               m_pWindowInfo->DesktopWindowXamlSource.Content(m_MainPage);
+
+               try
+               {// Try what's in m_sStaticContent, could end up as an index to a list??
+                  winrt::Uri uri((LPCTSTR)m_sStaticContent);
+                  m_MainPage.Source(uri);
+                  SetWindowText(uri.ToString().c_str());
+               }
+               catch(...)
+               {// Fall back on the Xaml - Source="https://aka.ms/windev"
+                  winrt::Uri uri = m_MainPage.Source();
+                  SetWindowText(uri.ToString().c_str());
+               }
 
                // Subscribe to the TakeFocusRequested event, which will be raised when Xaml wants to move keyboard focus back to our window.
                m_pWindowInfo->TakeFocusRequestedToken = m_pWindowInfo->DesktopWindowXamlSource.TakeFocusRequested(

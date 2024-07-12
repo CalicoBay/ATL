@@ -2,10 +2,10 @@
 
 
 #include "pch.h"
-#include "ATLMDIChild.h"
-#include "ATLMDI.h"
 #include <App.xaml.h>
 #include <MainPage.h>
+#include "ATLMDIChild.h"
+#include "ATLMDI.h"
 #include <Microsoft.UI.Dispatching.Interop.h> // For ContentPreTranslateMessage
 
 namespace winrt

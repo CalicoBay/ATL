@@ -26,9 +26,14 @@ namespace winrt::ATLMDI::implementation
         throw hresult_not_implemented();
     }
 
-    Uri MainPage::GetSource()
+    Uri MainPage::Source()
     {
        return OurWeb().Source();
+    }
+
+    void MainPage::Source(Uri const& value)
+    {
+       OurWeb().Source(value);
     }
 
     void MainPage::ClickHandler(IInspectable const&, RoutedEventArgs const&)

@@ -7,5 +7,6 @@ namespace ATLMDI
     {
         MainPage();
         Int32 MyProperty;
+        Windows.Foundation.Uri Source;
     }
 }
