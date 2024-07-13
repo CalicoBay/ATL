@@ -146,4 +146,15 @@ From https://devblogs.microsoft.com/visualstudio/dive-into-native-windows-develo
 which I got from the latest Visual Studio Installer,
 we get https://aka.ms/windev and https://learn.microsoft.com/windows/apps/get-started/start-here
 from there https://learn.microsoft.com/en-us/windows/apps/desktop/?source=recommendations which contains the above among others.
-The aka above leads to https://developer.microsoft.com/en-us/windows/develop/ which is a nice splash for development.
+The aka above leads to https://developer.microsoft.com/en-us/windows/develop/ which is a nice splash for development but actually not much new.
+I got https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/reference-framework-package-run-time but it shows a 404 - Page not found
+but at https://learn.microsoft.com/en-us/windows/apps/winui/winui3/create-your-first-winui3-app#unpackaged-create-a-new-project-for-an-unpackaged-c-or-c-winui-3-desktop-app 
+it says https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/binding-property is a good place to start learning 
+about the purpose and usage of .idl files. The beginning of that that points to https://learn.microsoft.com/en-us/windows/uwp/data-binding/ 
+and for essential concepts and terms see https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/consume-apis and 
+https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/author-apis. The later sporting #factoring-runtime-classes-into-midl-files-idl
+Note that these last 3 links are from uwp, but the concepts are the same. https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/ 
+says "If you're working on a UWP app, then refer to https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/migrate-to-windows-app-sdk-ovw" 
+which in turn says "If you're happy with the current functionality of the UWP platform and your UWP app, then there's no need to migrate your 
+project. WinUI 2 and the Windows SDK continue to support UWP project types." sure, somewhat confusing, but understandable.
+//2024-07-12
