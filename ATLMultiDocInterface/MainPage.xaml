@@ -13,13 +13,13 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="Auto"/>
-		</Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
-		<TextBox x:Name="addressBar" Grid.Column="0" />
-		<Button x:Name="Button" Grid.Column="1" Click="ClickHandler">Go</Button>
+        <TextBox x:Name="addressBar" Grid.Column="0" />
+        <Button x:Name="Button" Grid.Column="1" Click="ClickHandler">Go</Button>
         <WebView2 x:Name="OurWeb" Grid.Row="1" Grid.ColumnSpan="2" Source="https://aka.ms/windev"
                   NavigationStarting="NavStarting" NavigationCompleted="NavCompleted" />
     </Grid>
