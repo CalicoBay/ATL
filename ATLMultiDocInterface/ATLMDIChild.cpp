@@ -30,7 +30,7 @@ CATLMDIChild::CATLMDIChild(void) :
 {
    m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZENS));
    m_sContent = _T("https://learn.microsoft.com/en-gb/windows/apps/desktop/");
-   m_sStaticContent = _T("https://learn.microsoft.com/en-gb/windows/apps/windows-app-sdk/migrate-to-windows-app-sdk/migrate-to-windows-app-sdk-ovw");
+   m_sStaticContent = _T("https://learn.microsoft.com/en-us/uwp/midl-3/");
 }
 
 

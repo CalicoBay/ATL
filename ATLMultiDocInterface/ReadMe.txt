@@ -159,5 +159,6 @@ which in turn says "If you're happy with the current functionality of the UWP pl
 project. WinUI 2 and the Windows SDK continue to support UWP project types." sure, somewhat confusing, but understandable.
 //2024-07-12
 //2024-07-13
-I need to study this I believe. https://learn.microsoft.com/en-us/windows/win32/midl/midl-start-page
+I need to study this I believe. https://learn.microsoft.com/en-us/windows/win32/midl/midl-start-page for classic
+https://learn.microsoft.com/en-us/uwp/midl-3/ for WinRT types
 //2024-07-13
