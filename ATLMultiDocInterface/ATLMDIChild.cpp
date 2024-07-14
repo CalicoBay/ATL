@@ -23,6 +23,7 @@ CATLMDIChild::CATLMDIChild(void) :
    m_Static(_T("Static"), this),// , 1),// Now defaults to 0 re: //ALT_MSG_MAP(1) now commented out
    m_RectStatic{},
    m_hwndFrame(__nullptr),
+   m_hwndXamlIsland(__nullptr),
    m_pMDIFrame(__nullptr),
    m_pWindowInfo(__nullptr),
    m_hSplitCursor(__nullptr),
@@ -74,8 +75,8 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
                m_pWindowInfo->DesktopWindowXamlSource.Initialize(winrt::GetWindowIdFromWindow(hwndStatic));
 
                // Enable the DesktopWindowXamlSource to be a tab stop.
-               HWND hwndXamlIsland = winrt::GetWindowFromWindowId(m_pWindowInfo->DesktopWindowXamlSource.SiteBridge().WindowId());
-               ::SetWindowLong(hwndXamlIsland, GWL_STYLE, WS_TABSTOP | WS_CHILD | WS_VISIBLE);
+               m_hwndXamlIsland = winrt::GetWindowFromWindowId(m_pWindowInfo->DesktopWindowXamlSource.SiteBridge().WindowId());
+               ::SetWindowLong(m_hwndXamlIsland, GWL_STYLE, WS_TABSTOP | WS_CHILD | WS_VISIBLE);
 
                // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
                m_MainPage = winrt::make<winrt::ATLMDI::implementation::MainPage>();
@@ -85,28 +86,41 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
                {// Try what's in m_sStaticContent, could end up as an index to a list??
                   winrt::Uri uri((LPCTSTR)m_sStaticContent);
                   m_MainPage.Source(uri);
-                  SetWindowText(uri.ToString().c_str());
+                  //SetWindowText(uri.ToString().c_str());
                }
                catch(...)
                {// Fall back on the Xaml - Source="https://aka.ms/windev"
                   winrt::Uri uri = m_MainPage.Source();
-                  SetWindowText(uri.ToString().c_str());
+                  //SetWindowText(uri.ToString().c_str());
                }
+
+               //HWND hwndPrev = ::SetFocus(m_hwndXamlIsland);
+               //bool bFocusSet = (0 != hwndPrev);//m_pWindowInfo->DesktopWindowXamlSource.Content().Focus(winrt::Microsoft::UI::Xaml::FocusState::Programmatic);//::SetFocus(m_hwndXamlIsland);
+               //if(!bFocusSet)
+               //{// Only the first time, doesn't make any difference anyhow, probably shows in focus or OnSize does it
+               //   MessageBox(_T("Focus not set on m_hwndXamlIsland."));
+               //}
+               //else
+               //{
+               //   bFocusSet = (hwndPrev == hwndStatic);
+               //   bFocusSet = (hwndPrev == m_hWnd);
+               //   bFocusSet = (hwndPrev == m_hwndFrame);
+               //}
 
                // Subscribe to the TakeFocusRequested event, which will be raised when Xaml wants to move keyboard focus back to our window.
                m_pWindowInfo->TakeFocusRequestedToken = m_pWindowInfo->DesktopWindowXamlSource.TakeFocusRequested(
-                  [hwndStatic](winrt::DesktopWindowXamlSource const& /*sender*/, winrt::DesktopWindowXamlSourceTakeFocusRequestedEventArgs const& args) {
+                  [this](winrt::DesktopWindowXamlSource const& /*sender*/, winrt::DesktopWindowXamlSourceTakeFocusRequestedEventArgs const& args) {
                      if(args.Request().Reason() == winrt::XamlSourceFocusNavigationReason::First)
                      {
                         // The reason "First" means the user is tabbing forward, so put the focus on the button in the tab order
                         // after the DesktopWindowXamlSource.
-                        ::SetFocus(hwndStatic);
+                        m_Static.SetFocus(); //::SetFocus(m_hwndXamlIsland);
                      }
                      else if(args.Request().Reason() == winrt::XamlSourceFocusNavigationReason::Last)
                      {
                         // The reason "Last" means the user is tabbing backward (shift-tab, so put the focus on button prior to
                         // the DesktopWindowXamlSource.
-                        ::SetFocus(hwndStatic);
+                        m_Static.SetFocus(); //::SetFocus(m_hwndXamlIsland);
                      }
                   });
             }

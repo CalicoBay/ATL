@@ -16,6 +16,7 @@ public:
 	CATLMDIChild();
 	~CATLMDIChild();
 	HWND m_hwndFrame;
+	HWND m_hwndXamlIsland;
 	CString m_sOriginalTitle;
 	CString m_sContent;
    CString m_sStaticContent;

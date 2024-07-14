@@ -19,7 +19,7 @@ public:
       m_hPaneMenu(__nullptr),
       m_hSplitCursor(__nullptr)
    {
-      (void)m_sUntitled.LoadStringW(IDS_UNTITLED);
+		m_sUntitled = _T("Web Site ");//(void)m_sUntitled.LoadStringW(IDS_UNTITLED);
    }
 	HWND m_hMDIClient;
 	HMENU m_hPaneMenu;

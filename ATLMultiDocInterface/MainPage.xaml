@@ -7,7 +7,8 @@
     xmlns:local="using:ATLMDI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    TabFocusNavigation="Local">
     <Grid Padding="10" Background="Gray">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -18,9 +19,9 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBox x:Name="addressBar" Grid.Column="0" />
-        <Button x:Name="Button" Grid.Column="1" Click="ClickHandler">Go</Button>
+        <TextBox x:Name="addressBar" Grid.Column="0" TabIndex="0" />
+        <Button x:Name="Button" Grid.Column="1" Click="ClickHandler" TabIndex="1">Go</Button>
         <WebView2 x:Name="OurWeb" Grid.Row="1" Grid.ColumnSpan="2" Source="https://aka.ms/windev"
-                  NavigationStarting="NavStarting" NavigationCompleted="NavCompleted" />
+                  NavigationStarting="NavStarting" NavigationCompleted="NavCompleted" TabIndex="2" />
     </Grid>
 </Page>
