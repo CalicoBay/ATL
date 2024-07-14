@@ -158,3 +158,6 @@ says "If you're working on a UWP app, then refer to https://learn.microsoft.com/
 which in turn says "If you're happy with the current functionality of the UWP platform and your UWP app, then there's no need to migrate your 
 project. WinUI 2 and the Windows SDK continue to support UWP project types." sure, somewhat confusing, but understandable.
 //2024-07-12
+//2024-07-13
+I need to study this I believe. https://learn.microsoft.com/en-us/windows/win32/midl/midl-start-page
+//2024-07-13
