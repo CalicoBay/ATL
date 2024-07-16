@@ -11,18 +11,18 @@
 using namespace DirectX;
 
 CDWriteTab::CDWriteTab() :
-	m_bAnimated(false),
+   m_bAnimated(false),
    m_currentlySelecting(false),
    m_currentlyPanning(false),
    m_previousMouseX(0),
    m_previousMouseY(0),
-	m_dpiScaleX(1.0),
-	m_dpiScaleY(1.0),
+   m_dpiScaleX(1.0),
+   m_dpiScaleY(1.0),
    m_viewScaleX(1.0),
    m_viewScaleY(1.0),
-	m_Angle(0),
-	m_OriginX(0),
-	m_OriginY(0),
+   m_Angle(0),
+   m_OriginX(0),
+   m_OriginY(0),
    m_hWndParent(__nullptr),
    m_caretAnchor(0),
    m_caretPosition(0),
@@ -46,7 +46,7 @@ VOID CDWriteTab::AlignCaretToNearestCluster(bool isTrailingHit, bool skipZeroWid
       &caretX,
       &caretY,
       &hitTestMetrics
-      );
+   );
 
    // The caret position itself is always the leading edge.
    // An additional offset indicates a trailing edge when non-zero.
@@ -68,22 +68,22 @@ VOID CDWriteTab::AlignCaretToNearestCluster(bool isTrailingHit, bool skipZeroWid
 
 HRESULT CDWriteTab::Initialize(HWND hwndParent, LPCTSTR tszText /*= __nullptr*/)
 {
-	HRESULT hResult;
+   HRESULT hResult;
    m_rcClientF = D2D1_RECT_F();
-	if(__nullptr != tszText)
-	{
-		m_sInitText.Format(_T("%s"), tszText);
-	}
+   if(__nullptr != tszText)
+   {
+      m_sInitText.Format(_T("%s"), tszText);
+   }
 
-	HWND hwndThis = Create(hwndParent, CWindow::rcDefault);
-	hResult = (0 != hwndThis) ? S_OK : E_FAIL;
-	if(SUCCEEDED(hResult))
-	{
+   HWND hwndThis = Create(hwndParent, CWindow::rcDefault);
+   hResult = (0 != hwndThis) ? S_OK : E_FAIL;
+   if(SUCCEEDED(hResult))
+   {
       m_hWndParent = hwndParent;
       hResult = CreateDeviceIndependentResources();
-	}
- 
-	return hResult;
+   }
+
+   return hResult;
 }
 
 VOID CDWriteTab::ConstrainViewOrigin()
@@ -148,26 +148,26 @@ HRESULT CDWriteTab::CreateDeviceIndependentResources()
 {
    m_CComPtrD2DFactory1.Release();
    HRESULT hResult = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_CComPtrD2DFactory1);
-	if(SUCCEEDED(hResult))
-	{
+   if(SUCCEEDED(hResult))
+   {
       m_CComPtrDWriteFactory1.Release();
       hResult = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory1),
-								reinterpret_cast<IUnknown**>(&m_CComPtrDWriteFactory1));
+         reinterpret_cast<IUnknown**>(&m_CComPtrDWriteFactory1));
 
-	}
-	if(SUCCEEDED(hResult))
-	{//46.0 fills the 8.5 inch page with the row of '='s
+   }
+   if(SUCCEEDED(hResult))
+   {//46.0 fills the 8.5 inch page with the row of '='s
       m_layoutEditor.SetFactory(m_CComPtrDWriteFactory1);
       hResult = m_CComPtrDWriteFactory1->CreateTextFormat(L"Gabriola", __nullptr, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 18.0f, L"en-US", &m_CComPtrDWriteTextFormat0);
-	}
-	if(SUCCEEDED(hResult))
-	{
-		hResult = m_CComPtrDWriteTextFormat0->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-	}
-	if(SUCCEEDED(hResult))
-	{
-		hResult = m_CComPtrDWriteTextFormat0->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-	}
+   }
+   if(SUCCEEDED(hResult))
+   {
+      hResult = m_CComPtrDWriteTextFormat0->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+   }
+   if(SUCCEEDED(hResult))
+   {
+      hResult = m_CComPtrDWriteTextFormat0->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+   }
    if(SUCCEEDED(hResult))
    {
       float fTabs = m_CComPtrDWriteTextFormat0->GetIncrementalTabStop();
@@ -177,54 +177,57 @@ HRESULT CDWriteTab::CreateDeviceIndependentResources()
 
    float dpiX, dpiY;
    UINT uiDPI = ::GetDpiForWindow(this->m_hWnd);
+#pragma warning(push)
+#pragma warning(disable:4244)
    dpiX = dpiY = uiDPI;
+#pragma warning(pop)
    m_dpiScaleX = dpiX / 96.0f;
-	m_dpiScaleY = dpiY / 96.0f;
+   m_dpiScaleY = dpiY / 96.0f;
 
 
-	if(SUCCEEDED(hResult))
-	{
-		auto fileData = DX::ReadDataAsync("ReadMe.txt");
-		if(0 < fileData->Length)
-		{
-			int iUTF = IsUnicode(fileData); 
-			if(0 == iUTF)
-			{
-				m_sAnsi.Empty();
-				m_sAnsi.Append(LPCSTR(fileData->Data), fileData->Length);
-				m_sUnicode.AppendFormat(L"%S", m_sAnsi);
-			}
-			else if(8 == iUTF)
-			{
-				m_sAnsi.Empty();
-				m_sAnsi.Append(LPCSTR(&fileData->Data[3]), (fileData->Length - 3));
-				m_sUnicode.AppendFormat(L"%S", m_sAnsi);
-			}
-			else if(16 == iUTF)
-			{
-				m_sUnicode.Empty();
-				m_sUnicode.Append(LPCWSTR(fileData->Data), (fileData->Length >> 1));
-			}
-			else if(17 == iUTF)// Big-Endian
-			{
-				m_sUnicode.Empty();
-				if(0 == (fileData->Length % 2))
-				{
-					for(UINT i = 1; i < fileData->Length; i += 2)
-					{
-						byte least = fileData->Data[i - 1];
-						fileData->Data[i - 1] = fileData->Data[i];
-						fileData->Data[i] = least;
-					}
-				}
-				m_sUnicode.Append(LPCWSTR(fileData->Data), (fileData->Length >> 1));
-			}
-		}
-		else
-		{
-			m_sUnicode.Append(_T("\nReadMe.txt could not be loaded."));
-		}
-	}
+   if(SUCCEEDED(hResult))
+   {
+      auto fileData = DX::ReadDataAsync("ReadMe.txt");
+      if(0 < fileData->Length)
+      {
+         int iUTF = IsUnicode(fileData);
+         if(0 == iUTF)
+         {
+            m_sAnsi.Empty();
+            m_sAnsi.Append(LPCSTR(fileData->Data), fileData->Length);
+            m_sUnicode.AppendFormat(L"%S", (LPCSTR)m_sAnsi);
+         }
+         else if(8 == iUTF)
+         {
+            m_sAnsi.Empty();
+            m_sAnsi.Append(LPCSTR(&fileData->Data[3]), (fileData->Length - 3));
+            m_sUnicode.AppendFormat(L"%S", (LPCSTR)m_sAnsi);
+         }
+         else if(16 == iUTF)
+         {
+            m_sUnicode.Empty();
+            m_sUnicode.Append(LPCWSTR(fileData->Data), (fileData->Length >> 1));
+         }
+         else if(17 == iUTF)// Big-Endian
+         {
+            m_sUnicode.Empty();
+            if(0 == (fileData->Length % 2))
+            {
+               for(UINT i = 1; i < fileData->Length; i += 2)
+               {
+                  byte least = fileData->Data[i - 1];
+                  fileData->Data[i - 1] = fileData->Data[i];
+                  fileData->Data[i] = least;
+               }
+            }
+            m_sUnicode.Append(LPCWSTR(fileData->Data), (fileData->Length >> 1));
+         }
+      }
+      else
+      {
+         m_sUnicode.Append(_T("\nReadMe.txt could not be loaded."));
+      }
+   }
    if(SUCCEEDED(hResult))
    {
       float fX = 8.5f * dpiX;
@@ -315,41 +318,41 @@ HRESULT CDWriteTab::CreateDeviceIndependentResources()
 
 int CDWriteTab::IsUnicode(Platform::Array<byte>^ fileData)
 {
-	int iUTF = 0;
-	if(__nullptr != fileData && 3 < fileData->Length)
-	{
-		PUSHORT pFirstWord = PUSHORT(&fileData->Data[0]);
-		PUSHORT pSecondWord = PUSHORT(&fileData->Data[2]);
-		if(0xFEFF == *pFirstWord)
-		{//UTF16
-			iUTF = 16;
-		}
-		else if(0xFFFE == *pFirstWord)
-		{//UTF16 Big-Endian
-			iUTF = 17;
-		}
-		else if((0xFFEE == *pFirstWord && 0x0000 == *pSecondWord)
-					|| (0x0000 == *pFirstWord && 0xFEFF == *pSecondWord))
-		{//UTF32
-			iUTF = 32;
-		}
-		else if(0xBBEF == *pFirstWord)//0xEFBB
-		{
-			USHORT usCheck = (*pSecondWord & 0x00FF);//0xFF00
-			if(0x00BF == usCheck)//0xBF00
-			{//UTF8
-				iUTF = 8;
-			}
-		}
-	}
+   int iUTF = 0;
+   if(__nullptr != fileData && 3 < fileData->Length)
+   {
+      PUSHORT pFirstWord = PUSHORT(&fileData->Data[0]);
+      PUSHORT pSecondWord = PUSHORT(&fileData->Data[2]);
+      if(0xFEFF == *pFirstWord)
+      {//UTF16
+         iUTF = 16;
+      }
+      else if(0xFFFE == *pFirstWord)
+      {//UTF16 Big-Endian
+         iUTF = 17;
+      }
+      else if((0xFFEE == *pFirstWord && 0x0000 == *pSecondWord)
+         || (0x0000 == *pFirstWord && 0xFEFF == *pSecondWord))
+      {//UTF32
+         iUTF = 32;
+      }
+      else if(0xBBEF == *pFirstWord)//0xEFBB
+      {
+         USHORT usCheck = (*pSecondWord & 0x00FF);//0xFF00
+         if(0x00BF == usCheck)//0xBF00
+         {//UTF8
+            iUTF = 8;
+         }
+      }
+   }
 
-	return m_iUTF = iUTF;
+   return m_iUTF = iUTF;
 }
 
 HRESULT CDWriteTab::CreateDeviceResources()
 {
-	HRESULT hResult = S_OK;
-	//Create an IRenderTarget
+   HRESULT hResult = S_OK;
+   //Create an IRenderTarget
    RECT clientRect;
    GetClientRect(&clientRect);
    D2D1_SIZE_U size = D2D1::SizeU(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
@@ -358,7 +361,7 @@ HRESULT CDWriteTab::CreateDeviceResources()
    {
       hResult = m_CComPtrRenderTarget->CreateTarget(m_CComPtrD2DFactory1, m_CComPtrDWriteFactory1, m_hWnd);
    }
-	return hResult;
+   return hResult;
 }
 
 VOID CDWriteTab::DeleteSelection()
@@ -411,7 +414,7 @@ HRESULT CDWriteTab::DrawPage(IRenderTarget* pIRenderTarget)
    m_CComPtrRenderTarget->SetTransform(pageTransform);
    // Draw the page
    D2D1_POINT_2F pageSize = GetPageSize(m_CComPtrDWriteTextLayout0);
-   D2D1_RECT_F pageRect = {0, 0, pageSize.x, pageSize.y};
+   D2D1_RECT_F pageRect = { 0, 0, pageSize.x, pageSize.y };
 
    m_CComPtrRenderTarget->FillRectangle(pageRect, m_CComPtrPageBackgroundEffect);
    // Determine actual number of hit-test ranges
@@ -428,7 +431,7 @@ HRESULT CDWriteTab::DrawPage(IRenderTarget* pIRenderTarget)
          NULL,
          0, // metrics count
          &actualHitTestCount
-         );
+      );
    }
 
    // Allocate enough room to return all hit-test metrics.
@@ -444,7 +447,7 @@ HRESULT CDWriteTab::DrawPage(IRenderTarget* pIRenderTarget)
          &hitTestMetrics[0],
          static_cast<UINT32>(hitTestMetrics.size()),
          &actualHitTestCount
-         );
+      );
    }
 
    // Draw the selection ranges behind the text.
@@ -518,20 +521,20 @@ HRESULT CDWriteTab::DrawPage(IRenderTarget* pIRenderTarget)
 
 D2D1_POINT_2F CDWriteTab::GetPageSize(IDWriteTextLayout* pTextLayout)
 {
-	D2D1_POINT_2F pageSize = {0};
-	if(__nullptr != pTextLayout)
-	{
-		DWRITE_TEXT_METRICS textMetrics;
-		if(SUCCEEDED(pTextLayout->GetMetrics(&textMetrics)))
-		{
-			float width = max(textMetrics.layoutWidth, textMetrics.left + textMetrics.width);
-			float height = max(textMetrics.layoutHeight, textMetrics.height);
-			pageSize.x = width;
-			pageSize.y = height;
-		}
-	}
+   D2D1_POINT_2F pageSize = { 0 };
+   if(__nullptr != pTextLayout)
+   {
+      DWRITE_TEXT_METRICS textMetrics;
+      if(SUCCEEDED(pTextLayout->GetMetrics(&textMetrics)))
+      {
+         float width = max(textMetrics.layoutWidth, textMetrics.left + textMetrics.width);
+         float height = max(textMetrics.layoutHeight, textMetrics.height);
+         pageSize.x = width;
+         pageSize.y = height;
+      }
+   }
 
-	return pageSize;
+   return pageSize;
 }
 
 VOID CDWriteTab::UpdateScrollInfo()
@@ -549,15 +552,15 @@ VOID CDWriteTab::UpdateScrollInfo()
    GetInverseViewMatrix(&DX::Cast(pageTransform));
 
    // Transform vector of viewport size
-   D2D1_POINT_2F clientSize = {float(clientRect.right), float(clientRect.bottom)};
-   D2D1_POINT_2F scaledSize = {clientSize.x * pageTransform._11 + clientSize.y * pageTransform._21,
-      clientSize.x * pageTransform._12 + clientSize.y * pageTransform._22};
+   D2D1_POINT_2F clientSize = { float(clientRect.right), float(clientRect.bottom) };
+   D2D1_POINT_2F scaledSize = { clientSize.x * pageTransform._11 + clientSize.y * pageTransform._21,
+      clientSize.x * pageTransform._12 + clientSize.y * pageTransform._22 };
 
    float x = m_OriginX;
    float y = m_OriginY;
    D2D1_POINT_2F pageSize = DX::GetPageSize(m_CComPtrDWriteTextLayout0);
 
-   SCROLLINFO scrollInfo = {sizeof(scrollInfo)};
+   SCROLLINFO scrollInfo = { sizeof(scrollInfo) };
    scrollInfo.fMask = SIF_PAGE | SIF_POS | SIF_RANGE;
 
    if(DX::IsLandscapeAngle(m_Angle))
@@ -594,7 +597,7 @@ VOID CDWriteTab::RefreshView()
 // Gets the current caret position (in untransformed space).
 VOID CDWriteTab::GetCaretRect(D2D1_RECT_F& caretRect)
 {
-   D2D1_RECT_F zeroRect = {0};
+   D2D1_RECT_F zeroRect = { 0 };
    caretRect = zeroRect;
 
    if(__nullptr == m_CComPtrDWriteTextLayout0)
@@ -608,7 +611,7 @@ VOID CDWriteTab::GetCaretRect(D2D1_RECT_F& caretRect)
 
    m_CComPtrDWriteTextLayout0->HitTestTextPosition(m_caretPosition,
       m_caretPositionOffset > 0, // trailing if nonzero, else leading edge
-         &caretX, &caretY, &caretMetrics);
+      &caretX, &caretY, &caretMetrics);
 
    // If a selection exists, draw the caret using the
    // line size rather than the font size.
@@ -618,9 +621,9 @@ VOID CDWriteTab::GetCaretRect(D2D1_RECT_F& caretRect)
       UINT32 actualHitTestCount = 1;
       m_CComPtrDWriteTextLayout0->HitTestTextRange(m_caretPosition,
          0, // length
-            0, // x
-               0, // y
-                  &caretMetrics, 1, &actualHitTestCount);
+         0, // x
+         0, // y
+         &caretMetrics, 1, &actualHitTestCount);
 
       caretY = caretMetrics.top;
    }
@@ -638,8 +641,8 @@ VOID CDWriteTab::GetCaretRect(D2D1_RECT_F& caretRect)
    caretRect.bottom = caretY + caretMetrics.height;
 }
 
-void CDWriteTab::GetLineFromPosition( const DWRITE_LINE_METRICS* lineMetrics, // [lineCount]
-      UINT32 lineCount, UINT32 textPosition, OUT UINT32* lineOut, OUT UINT32* linePositionOut)
+void CDWriteTab::GetLineFromPosition(const DWRITE_LINE_METRICS* lineMetrics, // [lineCount]
+   UINT32 lineCount, UINT32 textPosition, OUT UINT32* lineOut, OUT UINT32* linePositionOut)
 {
    // Given the line metrics, determines the current line and starting text
    // position of that line by summing up the lengths. When the starting
@@ -689,7 +692,7 @@ DWRITE_TEXT_RANGE CDWriteTab::GetSelectionRange()
    caretBegin = min(caretBegin, textLength);
    caretEnd = min(caretEnd, textLength);
 
-   DWRITE_TEXT_RANGE textRange = {caretBegin, caretEnd - caretBegin};
+   DWRITE_TEXT_RANGE textRange = { caretBegin, caretEnd - caretBegin };
    return textRange;
 }
 
@@ -832,20 +835,23 @@ VOID CDWriteTab::PasteFromClipboard()
          size_t byteSize = GlobalSize(hClipboardData);
          void* memory = GlobalLock(hClipboardData); // [byteSize] in bytes
          const wchar_t* text = reinterpret_cast<const wchar_t*>(memory);
-         characterCount = static_cast<UINT32>(wcsnlen(text, byteSize / sizeof(wchar_t)));
-
-         if(memory != NULL)
+         if(__nullptr != text)
          {
-            // Insert the text at the current position.
-            m_layoutEditor.InsertTextAt(
-               m_CComPtrDWriteTextLayout0,
-               m_sUnicode,
-               m_caretPosition + m_caretPositionOffset,
-               text,
-               characterCount
+            characterCount = static_cast<UINT32>(wcsnlen(text, byteSize / sizeof(wchar_t)));
+
+            if(NULL != memory)
+            {
+               // Insert the text at the current position.
+               m_layoutEditor.InsertTextAt(
+                  m_CComPtrDWriteTextLayout0,
+                  m_sUnicode,
+                  m_caretPosition + m_caretPositionOffset,
+                  text,
+                  characterCount
                );
-            ::GlobalUnlock(hClipboardData);
+            }
          }
+         ::GlobalUnlock(hClipboardData);
       }
       CloseClipboard();
    }
@@ -904,7 +910,7 @@ bool CDWriteTab::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
          if(absolutePosition >= 1
             && signed(absolutePosition) < m_sUnicode.GetAllocLength()
             && m_sUnicode[absolutePosition - 1] == '\r'
-            &&  m_sUnicode[absolutePosition] == '\n')
+            && m_sUnicode[absolutePosition] == '\n')
          {
             m_caretPosition = absolutePosition - 1;
             AlignCaretToNearestCluster(false, true);
@@ -921,7 +927,7 @@ bool CDWriteTab::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
       if(absolutePosition >= 1
          && signed(absolutePosition) < m_sUnicode.GetAllocLength()
          && m_sUnicode[absolutePosition - 1] == '\r'
-         &&  m_sUnicode[absolutePosition] == '\n')
+         && m_sUnicode[absolutePosition] == '\n')
       {
          m_caretPosition = absolutePosition + 1;
          AlignCaretToNearestCluster(false, true);
@@ -948,7 +954,7 @@ bool CDWriteTab::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
             &caretX,
             &caretY,
             &hitTestMetrics
-            );
+         );
          m_caretPosition = min(m_caretPosition, hitTestMetrics.textPosition + hitTestMetrics.length);
       }
       break;
@@ -967,7 +973,7 @@ bool CDWriteTab::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
          m_caretPosition,
          &line,
          &linePosition
-         );
+      );
 
       // Move up a line or down
       if(moveMode == SetSelectionModeUp)
@@ -1001,7 +1007,7 @@ bool CDWriteTab::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
          &caretX,
          &caretY,
          &hitTestMetrics
-         );
+      );
 
       // Get y of new position
       m_CComPtrDWriteTextLayout0->HitTestTextPosition(
@@ -1010,7 +1016,7 @@ bool CDWriteTab::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
          &dummyX,
          &caretY,
          &hitTestMetrics
-         );
+      );
 
       // Now get text position of new x,y.
       BOOL isInside, isTrailingHit;
@@ -1020,12 +1026,12 @@ bool CDWriteTab::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
          &isTrailingHit,
          &isInside,
          &hitTestMetrics
-         );
+      );
 
       m_caretPosition = hitTestMetrics.textPosition;
       m_caretPositionOffset = isTrailingHit ? (hitTestMetrics.length > 0) : 0;
    }
-      break;
+   break;
 
    case SetSelectionModeLeftWord:
    case SetSelectionModeRightWord:
@@ -1085,7 +1091,7 @@ bool CDWriteTab::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
          }
       }
    }
-      break;
+   break;
 
    case SetSelectionModeHome:
    case SetSelectionModeEnd:
@@ -1101,7 +1107,7 @@ bool CDWriteTab::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
          m_caretPosition,
          &line,
          &m_caretPosition
-         );
+      );
 
       m_caretPositionOffset = 0;
       if(moveMode == SetSelectionModeEnd)
@@ -1115,7 +1121,7 @@ bool CDWriteTab::SetSelection(SetSelectionMode moveMode, UINT32 advance, bool ex
          AlignCaretToNearestCluster(true);
       }
    }
-      break;
+   break;
 
    case SetSelectionModeFirst:
       m_caretPosition = 0;
@@ -1218,14 +1224,14 @@ bool CDWriteTab::SetSelectionFromPoint(float x, float y, bool extendSelection)
       &isTrailingHit,
       &isInside,
       &caretMetrics
-      );
+   );
 
    // Update current selection according to click or mouse drag.
    SetSelection(
       isTrailingHit ? SetSelectionModeAbsoluteTrailing : SetSelectionModeAbsoluteLeading,
       caretMetrics.textPosition,
       extendSelection
-      );
+   );
 
    return true;
 }
@@ -1323,7 +1329,7 @@ LRESULT CDWriteTab::OnContextMenu(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL&
    HMENU hPopup = ::CreatePopupMenu();
    if(__nullptr != hPopup)
    {
-      MENUITEMINFO menuItemInfo = {0};
+      MENUITEMINFO menuItemInfo = { 0 };
       menuItemInfo.cbSize = sizeof(MENUITEMINFO);
       menuItemInfo.fMask = MIIM_TYPE | MIIM_ID;
       menuItemInfo.fType = MFT_STRING;
@@ -1398,7 +1404,7 @@ LRESULT CDWriteTab::OnKeyCharacter(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL
       // many code-units were inserted.
 
       UINT32 charsLength = 1;
-      wchar_t chars[2] = {static_cast<wchar_t>(charCode), 0};
+      wchar_t chars[2] = { static_cast<wchar_t>(charCode), 0 };
 
       // If above the basic multi-lingual plane, split into
       // leading and trailing surrogates.
@@ -1491,7 +1497,7 @@ LRESULT CDWriteTab::OnKeyPress(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL& bH
             &caretX,
             &caretY,
             &hitTestMetrics
-            );
+         );
          //SetSelection(SetSelectionModeRightChar, hitTestMetrics.length, false);
          DeleteSelection();
          m_layoutEditor.RemoveTextAt(m_CComPtrDWriteTextLayout0, m_sUnicode, hitTestMetrics.textPosition, hitTestMetrics.length);
@@ -1733,7 +1739,7 @@ LRESULT CDWriteTab::OnScroll(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL& /*bH
 
    WORD wRequest = LOWORD(wParam);
    int nDelta = (0 == int(lParam)) ? 15 : int(lParam);
-   SCROLLINFO scrollInfo = {sizeof(scrollInfo)};
+   SCROLLINFO scrollInfo = { sizeof(scrollInfo) };
    scrollInfo.fMask = SIF_ALL;
    int barOrientation = (nMsg == WM_VSCROLL) ? SB_VERT : SB_HORZ;
    if(GetScrollInfo(barOrientation, &scrollInfo))
@@ -1774,8 +1780,8 @@ LRESULT CDWriteTab::OnScroll(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL& /*bH
          GetInverseViewMatrix(&DX::Cast(pageTransform));
          float inversePos = float(scrollInfo.nMax - scrollInfo.nPage - scrollInfo.nPos);
 
-         D2D1_POINT_2F scaledSize = {pageTransform._11 + pageTransform._21,
-            pageTransform._12 + pageTransform._22};
+         D2D1_POINT_2F scaledSize = { pageTransform._11 + pageTransform._21,
+            pageTransform._12 + pageTransform._22 };
 
          // Adjust the correct origin.
          if((barOrientation == SB_VERT) ^ DX::IsLandscapeAngle(m_Angle))
