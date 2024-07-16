@@ -21,34 +21,34 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5888A5FC-D729-43FD-825C-DC9ECD17E768}</ProjectGuid>
     <Keyword>AtlProj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfAtl>Dynamic</UseOfAtl>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <UseOfAtl>Dynamic</UseOfAtl>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -107,7 +107,7 @@
       <AdditionalUsingDirectories>$(VCInstallDir)\vcpackages;$(WindowsSDK_MetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <MinimalRebuild>false</MinimalRebuild>
-      <AdditionalIncludeDirectories>..\Include;..\..\Include;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Include;$(ProjectDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -149,7 +149,7 @@ fxc /T vs_4_0_level_9_3 /Zi /E"main" /Od /Fo"$(OutDir)SimpleVertexShader.cso" "$
       <AdditionalUsingDirectories>$(VCInstallDir)Tools\MSVC\$(VCToolsVersion)\lib\x86\store\references;$(VCInstallDir)vcpackages;$(WindowsSDK_MetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <MinimalRebuild>false</MinimalRebuild>
-      <AdditionalIncludeDirectories>..\Include;..\..\Include;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Include;$(ProjectDir)</AdditionalIncludeDirectories>
       <ForcedUsingFiles>$(VCInstallDir)Tools\MSVC\$(VCToolsVersion)\lib\x86\store\references\platform.winmd</ForcedUsingFiles>
     </ClCompile>
     <Midl>
@@ -174,7 +174,8 @@ fxc /T vs_4_0_level_9_3 /Zi /E"main" /Od /Fo"$(OutDir)SimpleVertexShader.cso" "$
       <RegisterOutput>false</RegisterOutput>
       <TypeLibraryResourceID>2</TypeLibraryResourceID>
       <IgnoreEmbeddedIDL>true</IgnoreEmbeddedIDL>
-      <AdditionalLibraryDirectories></AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -246,7 +247,7 @@ fxc /T vs_4_0_level_9_3 /Zi /E"main" /Od /Fo"$(OutDir)SimpleVertexShader.cso" "$
       <SDLCheck>true</SDLCheck>
       <CompileAsWinRT>true</CompileAsWinRT>
       <AdditionalUsingDirectories>$(VCInstallDir)Tools\MSVC\$(VCToolsVersion)\lib\x86\store\references;$(VCInstallDir)vcpackages;$(WindowsSDK_MetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories>..\Include;..\..\Include;$(ProjectDir);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Include;$(ProjectDir);</AdditionalIncludeDirectories>
       <ForcedUsingFiles>$(VCInstallDir)Tools\MSVC\$(VCToolsVersion)\lib\x86\store\references\platform.winmd</ForcedUsingFiles>
     </ClCompile>
     <Midl>
@@ -287,10 +288,10 @@ echo IDR_VERTEX_SHADER RCDATA $(OutDir)SimpleVertexShader.cso &gt;&gt; $(ProjDir
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\DrawingEffects.cpp" />
-    <ClCompile Include="..\..\EditableLayout.cpp" />
-    <ClCompile Include="..\..\InlineImage.cpp" />
-    <ClCompile Include="..\..\RenderTarget.cpp" />
+    <ClCompile Include="..\DrawingEffects.cpp" />
+    <ClCompile Include="..\EditableLayout.cpp" />
+    <ClCompile Include="..\InlineImage.cpp" />
+    <ClCompile Include="..\RenderTarget.cpp" />
     <ClCompile Include="ATLDirectX1.cpp" />
     <ClCompile Include="D3DCubeTab.cpp" />
     <ClCompile Include="D3DTab.cpp" />
@@ -305,10 +306,10 @@ echo IDR_VERTEX_SHADER RCDATA $(OutDir)SimpleVertexShader.cso &gt;&gt; $(ProjDir
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Include\DrawingEffects.h" />
-    <ClInclude Include="..\..\Include\EditableLayout.h" />
-    <ClInclude Include="..\..\Include\InlineImage.h" />
-    <ClInclude Include="..\..\Include\RenderTarget.h" />
+    <ClInclude Include="..\Include\DrawingEffects.h" />
+    <ClInclude Include="..\Include\EditableLayout.h" />
+    <ClInclude Include="..\Include\InlineImage.h" />
+    <ClInclude Include="..\Include\RenderTarget.h" />
     <ClInclude Include="D3DCubeTab.h" />
     <ClInclude Include="D3DTab.h" />
     <ClInclude Include="DWriteTab.h" />

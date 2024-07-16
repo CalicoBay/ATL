@@ -176,7 +176,8 @@ HRESULT CDWriteTab::CreateDeviceIndependentResources()
    }
 
    float dpiX, dpiY;
-   m_CComPtrD2DFactory1->GetDesktopDpi(&dpiX, &dpiY);
+   UINT uiDPI = ::GetDpiForWindow(this->m_hWnd);
+   dpiX = dpiY = uiDPI;
    m_dpiScaleX = dpiX / 96.0f;
 	m_dpiScaleY = dpiY / 96.0f;
 
