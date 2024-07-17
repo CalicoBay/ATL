@@ -1,7 +1,7 @@
 // ATLDirectX1.cpp : Implementation of WinMain
 
 
-#include "stdafx.h"
+#include "pch.h"
 #include "resource.h"
 #include "MainWnd.h"
 
@@ -43,7 +43,7 @@ public:
 		}
 
 		// Initialize the Windows Runtime.
-		// This is needed for namespace DX in stdafx ReadDataAsync
+		// This is needed for namespace DX in pch ReadDataAsync
 		// ie:Microsoft::WRL::ComPtr<> doesn't need it.
 		//Microsoft::WRL::Wrappers::RoInitializeWrapper initialize(RO_INIT_MULTITHREADED);
 		//if (FAILED(initialize))

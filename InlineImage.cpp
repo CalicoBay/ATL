@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------------
 // May 29th, 2014 This code was changed to work with ATL without the use of MIDL
 // InlineImage.cpp
-#include "stdafx.h"
+#include "pch.h"
 #include "RenderTarget.h"
 #include "DrawingEffects.h"
 #include "InlineImage.h"

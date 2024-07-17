@@ -145,12 +145,14 @@ fxc /T vs_4_0_level_9_3 /Zi /E"main" /Od /Fo"$(OutDir)SimpleVertexShader.cso" "$
       <SDLCheck>true</SDLCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <BrowseInformation>true</BrowseInformation>
+      <BrowseInformation>false</BrowseInformation>
       <AdditionalUsingDirectories>$(VCInstallDir)Tools\MSVC\$(VCToolsVersion)\lib\x86\store\references;$(VCInstallDir)vcpackages;$(WindowsSDK_MetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <CompileAsWinRT>true</CompileAsWinRT>
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalIncludeDirectories>..\Include;$(ProjectDir)</AdditionalIncludeDirectories>
       <ForcedUsingFiles>$(VCInstallDir)Tools\MSVC\$(VCToolsVersion)\lib\x86\store\references\platform.winmd</ForcedUsingFiles>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -298,7 +300,7 @@ echo IDR_VERTEX_SHADER RCDATA $(OutDir)SimpleVertexShader.cso &gt;&gt; $(ProjDir
     <ClCompile Include="DWriteTab.cpp" />
     <ClCompile Include="D2DTab.cpp" />
     <ClCompile Include="MainWnd.cpp" />
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -316,7 +318,7 @@ echo IDR_VERTEX_SHADER RCDATA $(OutDir)SimpleVertexShader.cso &gt;&gt; $(ProjDir
     <ClInclude Include="D2DTab.h" />
     <ClInclude Include="MainWnd.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>

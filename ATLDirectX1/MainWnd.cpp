@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "D2DTab.h"
 #include "D3DTab.h"
 #include "EditableLayout.h"

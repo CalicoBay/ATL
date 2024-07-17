@@ -1,8 +1,8 @@
-// stdafx.cpp : source file that includes just the standard includes
+// pch.cpp : source file that includes just the standard includes
 // ATLDirectX1.pch will be the pre-compiled header
-// stdafx.obj will contain the pre-compiled type information
+// pch.obj will contain the pre-compiled type information
 
-#include "stdafx.h"
+#include "pch.h"
 namespace
 {
    HRESULT LoadAndLockResource(LPCWSTR wszResourceName, LPCWSTR wszResourceType, OUT UINT8** ppFileData, OUT PDWORD pdwFileSize)

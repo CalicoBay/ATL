@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "EditableLayout.h"
 #include "DrawingEffects.h"
 #include "RenderTarget.h"

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "D3DCubeTab.h"
 
 using namespace std;

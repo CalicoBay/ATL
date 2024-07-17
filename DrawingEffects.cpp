@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------------
 // May 27th, 2014 This code was changed to work with ATL without the use of MIDL
 // DrawingEffect.cpp
-#include "stdafx.h"
+#include "pch.h"
 #include "DrawingEffects.h"
 
 // {1E781FAE-1CA9-4B6B-AE8B-B23FA8F59A93}

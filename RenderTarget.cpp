@@ -13,7 +13,7 @@
 // May 28th, 2014 This code was changed to work with ATL without the use of MIDL
 // Only the D2D implementation is here, as true COM requires two separate interfaces
 // RenderTarget.cpp
-#include "stdafx.h"
+#include "pch.h"
 #include "DrawingEffects.h"
 #include "InlineImage.h"
 #include "RenderTarget.h"

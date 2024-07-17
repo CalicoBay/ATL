@@ -12,7 +12,7 @@
 //              reference, since the adapter forwards all the calls onward.
 //
 //----------------------------------------------------------------------------
-#include "stdafx.h"
+#include "pch.h"
 #include "EditableLayout.h"
 
 

@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ATLDirectX1.cpp">
@@ -36,21 +36,21 @@
     <ClCompile Include="D3DCubeTab.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\EditableLayout.cpp">
+    <ClCompile Include="..\EditableLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\DrawingEffects.cpp">
+    <ClCompile Include="..\DrawingEffects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\RenderTarget.cpp">
+    <ClCompile Include="..\RenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\InlineImage.cpp">
+    <ClCompile Include="..\InlineImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
@@ -74,16 +74,16 @@
     <ClInclude Include="D3DCubeTab.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\EditableLayout.h">
+    <ClInclude Include="..\Include\EditableLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\DrawingEffects.h">
+    <ClInclude Include="..\Include\DrawingEffects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\RenderTarget.h">
+    <ClInclude Include="..\Include\RenderTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\InlineImage.h">
+    <ClInclude Include="..\Include\InlineImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

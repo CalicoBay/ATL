@@ -162,3 +162,6 @@ project. WinUI 2 and the Windows SDK continue to support UWP project types." sur
 I need to study this I believe. https://learn.microsoft.com/en-us/windows/win32/midl/midl-start-page for classic
 https://learn.microsoft.com/en-us/uwp/midl-3/ for WinRT types
 //2024-07-13
+//2024-07-16
+https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/use-windows-app-sdk-in-existing-project
+//2024-07-16
