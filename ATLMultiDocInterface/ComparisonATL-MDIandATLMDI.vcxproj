@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ProjectDifferences One="ATL-MIDI.vcxproj" Two="ATLMDI.vcxproj"> <!-- Number of Lines 165 and 227 respectively-->
+	<Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.props" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.props')" />
+	<Import Project="..\packages\Microsoft.WindowsAppSDK.1.5.240607001\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240607001\build\native\Microsoft.WindowsAppSDK.props')" />
+	<Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props')" />
+	<!--<RootNamespace>ATL-MDI</RootNamespace>
+	<ProjectName>ATL-MDI</ProjectName>
+	<SccProjectName>SAK</SccProjectName>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccLocalPath>SAK</SccLocalPath>
+	<SccProvider>SAK</SccProvider>-->
+	<RootNamespace>ATLMDI</RootNamespace>
+	<ProjectName>ATLMDI</ProjectName>
+	<!-- Island-support: Needed to generate App.xaml.g.h (e.g. pulls in Microsoft.Cpp.AppContainerApplication.props) -->
+	<ApplicationType>Windows Store</ApplicationType>
+	<!-- Island-support: We want the app to be unpackaged -->
+	<WindowsPackageType>None</WindowsPackageType>
+	<WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+	<!--<PlatformToolset>v142</PlatformToolset> All to v143-->
+	<PlatformToolset>v143</PlatformToolset>
+	<!--<RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+	<PrecompiledHeader>Create</PrecompiledHeader>
+	<BrowseInformation>true</BrowseInformation>
+	<AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>-->
+	<RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+	<BrowseInformation>false</BrowseInformation>
+	<AdditionalIncludeDirectories>$(ProjectDir);$(GeneratedFilesDir);$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+	<PrecompiledHeader>Use</PrecompiledHeader>
+	<PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+	<MultiProcessorCompilation>false</MultiProcessorCompilation>
+	<!--<Link>
+		<GenerateDebugInformation>true</GenerateDebugInformation>
+	</Link>-->
+	<Link>
+		<GenerateDebugInformation>true</GenerateDebugInformation>
+		<DelayLoadDLLs>Microsoft.UI.Windowing.Core.dll</DelayLoadDLLs>
+		<AdditionalDependencies>ucrtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+	</Link>
+	<!--<ItemGroup>
+		<None Include="ATL-MDI.ico" />
+		<None Include="ReadMe.txt">
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+		</None>
+		<None Include="small.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<ResourceCompile Include="ATL-MDI.rc" />
+	</ItemGroup>-->
+	<ItemGroup>
+		<None Include="ATLMDI.ico" />
+		<None Include="packages.config" />
+		<None Include="ReadMe.txt">
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+			<ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+		</None>
+		<None Include="small.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		<ResourceCompile Include="ATLMDI.rc" />
+	</ItemGroup>
+	<!--<ItemGroup>
+		<ClInclude Include="ATL-MDI.h" />
+		<ClInclude Include="ATL-MDIChild.h" />
+		<ClInclude Include="Resource.h" />
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="targetver.h" />
+	</ItemGroup>-->
+	<ItemGroup>
+		<ClInclude Include="pch.h" />
+		<ClInclude Include="App.xaml.h">
+			<DependentUpon>App.xaml</DependentUpon>
+			<SubType>Code</SubType>
+		</ClInclude>
+		<ClInclude Include="MainPage.h">
+			<DependentUpon>MainPage.xaml</DependentUpon>
+			<SubType>Code</SubType>
+		</ClInclude>
+		<ClInclude Include="ATLMDI.h" />
+		<ClInclude Include="ATLMDIChild.h" />
+		<ClInclude Include="Resource.h" />
+		<ClInclude Include="targetver.h" />
+	</ItemGroup>
+	<!--<ItemGroup>
+		<ClCompile Include="ATL-MDI.cpp" />
+		<ClCompile Include="ATL-MDIChild.cpp" />
+		<ClCompile Include="stdafx.cpp" />
+	</ItemGroup>-->
+	<ItemGroup>
+		<ClCompile Include="pch.cpp">
+			<PrecompiledHeader>Create</PrecompiledHeader>
+		</ClCompile>
+		<ClCompile Include="App.xaml.cpp">
+			<DependentUpon>App.xaml</DependentUpon>
+			<SubType>Code</SubType>
+		</ClCompile>
+		<ClCompile Include="MainPage.cpp">
+			<DependentUpon>MainPage.xaml</DependentUpon>
+			<SubType>Code</SubType>
+		</ClCompile>
+		<!-- Island-support: This generated file implements some activation factories -->
+		<ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+		<ClCompile Include="ATLMDI.cpp" />
+		<ClCompile Include="ATLMDIChild.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<!-- Island-support: Needed to run Markup Compiler on App.xaml and make the generated files -->
+		<ApplicationDefinition Include="App.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+		<Midl Include="App.idl">
+			<DependentUpon>App.xaml</DependentUpon>
+			<SubType>Code</SubType>
+		</Midl>
+		<Midl Include="MainPage.idl">
+			<DependentUpon>MainPage.xaml</DependentUpon>
+			<SubType>Code</SubType>
+		</Midl>
+	</ItemGroup>
+	<ItemGroup>
+		<Page Include="MainPage.xaml">
+			<SubType>Designer</SubType>
+		</Page>
+	</ItemGroup>
+	<!--<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>-->
+	<ImportGroup Label="ExtensionTargets">
+		<Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets')" />
+		<Import Project="..\packages\Microsoft.WindowsAppSDK.1.5.240607001\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240607001\build\native\Microsoft.WindowsAppSDK.targets')" />
+		<Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.targets')" />
+	</ImportGroup>
+	<Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+		<PropertyGroup>
+			<ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+		</PropertyGroup>
+		<Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props'))" />
+		<Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+		<Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240607001\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.5.240607001\build\native\Microsoft.WindowsAppSDK.props'))" />
+		<Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.5.240607001\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.5.240607001\build\native\Microsoft.WindowsAppSDK.targets'))" />
+		<Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.props'))" />
+		<Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.targets'))" />
+	</Target>
+</ProjectDifferences>
