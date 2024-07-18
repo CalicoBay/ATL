@@ -19,7 +19,7 @@ extern "C" const CLSID CLSID_RenderTarget;
 typedef interface IRenderTarget IRenderTarget;
 MIDL_INTERFACE("56A6701D-2A37-4D1C-BB9C-3F69BAC14FCB")IRenderTarget : IDWriteTextRenderer
 {
-   virtual HRESULT STDMETHODCALLTYPE CreateTarget(ID2D1Factory1* pID2D1Factory1, IDWriteFactory1* pID2D1WriteFactory1, HWND hWnd) = 0;
+   virtual HRESULT STDMETHODCALLTYPE CreateTarget(ID2D1Factory1* pID2D1Factory1, IDWriteFactory7* pID2D1WriteFactory7, HWND hWnd) = 0;
    virtual HRESULT STDMETHODCALLTYPE BeginDraw() = 0;
    virtual HRESULT STDMETHODCALLTYPE EndDraw() = 0;
    virtual HRESULT STDMETHODCALLTYPE Clear(UINT32 color) = 0;
@@ -49,7 +49,7 @@ public:
    END_COM_MAP()
    RenderTarget();
    virtual ~RenderTarget(){};
-   virtual HRESULT STDMETHODCALLTYPE CreateTarget(ID2D1Factory1* pID2D1Factory1, IDWriteFactory1* pID2D1WriteFactory1, HWND hWnd);
+   virtual HRESULT STDMETHODCALLTYPE CreateTarget(ID2D1Factory1* pID2D1Factory1, IDWriteFactory7* pID2D1WriteFactory7, HWND hWnd);
    virtual HRESULT STDMETHODCALLTYPE BeginDraw();
    virtual HRESULT STDMETHODCALLTYPE EndDraw();
    virtual HRESULT STDMETHODCALLTYPE Clear(UINT32 color);
@@ -183,7 +183,7 @@ protected:
    ID2D1Brush*  GetCachedBrush(IDrawingEffect* pDrawingEffect);
 
 protected:
-   CComPtr<IDWriteFactory1> m_CComPtrIDWriteFactory1;
+   CComPtr<IDWriteFactory7> m_CComPtrIDWriteFactory7;
    CComPtr<ID2D1Factory1> m_CComPtrID2D1Factory1;
    CComPtr<ID2D1HwndRenderTarget> m_CComPtrID2D1HwndRenderTarget;     // D2D render target
    CComPtr<ID2D1SolidColorBrush> m_CComPtrReusableBrush;       // reusable scratch brush for current color

@@ -29,7 +29,7 @@ protected:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView>	m_ComPtrDepthStencilView;
    Microsoft::WRL::ComPtr<ID3D11RasterizerState1> m_ComPtrRastCurrent;
    Microsoft::WRL::ComPtr<ID2D1Factory1> m_ComPtrD2DFactory1;
-   Microsoft::WRL::ComPtr<IDWriteFactory1> m_ComPtrIDWriteFactory1;
+   Microsoft::WRL::ComPtr<IDWriteFactory7> m_ComPtrIDWriteFactory7;
    Microsoft::WRL::ComPtr<ID2D1RenderTarget> m_ComPtrD2DRenderTarget;
    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_ComPtrWhiteBrush;
    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_ComPtrTextBrush;

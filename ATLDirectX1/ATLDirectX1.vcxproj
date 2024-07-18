@@ -184,7 +184,7 @@ fxc /T vs_4_0_level_9_3 /Zi /E"main" /Od /Fo"$(OutDir)SimpleVertexShader.cso" "$
       <IgnoreEmbeddedIDL>true</IgnoreEmbeddedIDL>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
+      <DelayLoadDLLs>DWriteCore.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>

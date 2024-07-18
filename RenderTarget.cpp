@@ -91,15 +91,15 @@ ID2D1Bitmap* RenderTarget::GetCachedImage(IWICBitmapSource* pIWICBitmapSource)
    return pID2D1Bitmap;
 }
 
-HRESULT STDMETHODCALLTYPE RenderTarget::CreateTarget(ID2D1Factory1* pID2D1Factory1, IDWriteFactory1* pID2D1WriteFactory1, HWND hWnd)
+HRESULT STDMETHODCALLTYPE RenderTarget::CreateTarget(ID2D1Factory1* pID2D1Factory1, IDWriteFactory7* pID2D1WriteFactory7, HWND hWnd)
 {
    HRESULT hr = S_OK;
    m_CComPtrID2D1Factory1 = pID2D1Factory1;
-   m_CComPtrIDWriteFactory1 = pID2D1WriteFactory1;
+   m_CComPtrIDWriteFactory7 = pID2D1WriteFactory7;
    m_hWnd = hWnd;
    m_CComPtrID2D1HwndRenderTarget = __nullptr;
    m_CComPtrReusableBrush = __nullptr;
-   if(__nullptr == m_CComPtrID2D1Factory1.p || __nullptr == m_CComPtrIDWriteFactory1 || __nullptr == m_hWnd)
+   if(__nullptr == m_CComPtrID2D1Factory1.p || __nullptr == m_CComPtrIDWriteFactory7 || __nullptr == m_hWnd)
    {
       hr = E_INVALIDARG;
    }
@@ -197,7 +197,7 @@ HRESULT STDMETHODCALLTYPE RenderTarget::UpdateMonitor()
    {// Create based on monitor settings, rather than the defaults of
       // gamma=1.8, contrast=.5, and clearTypeLevel=.5
       IDWriteRenderingParams* pIDWriteRenderingParams = __nullptr;
-      hr = m_CComPtrIDWriteFactory1->CreateMonitorRenderingParams(monitor, &pIDWriteRenderingParams);
+      hr = m_CComPtrIDWriteFactory7->CreateMonitorRenderingParams(monitor, &pIDWriteRenderingParams);
       if(SUCCEEDED(hr))
       {
          m_CComPtrID2D1HwndRenderTarget->SetTextRenderingParams(pIDWriteRenderingParams);

@@ -151,7 +151,7 @@ HRESULT CDWriteTab::CreateDeviceIndependentResources()
    if(SUCCEEDED(hResult))
    {
       m_CComPtrDWriteFactory1.Release();
-      hResult = ::DWriteCoreCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory1),
+      hResult = ::DWriteCoreCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7),
          reinterpret_cast<IUnknown**>(&m_CComPtrDWriteFactory1));
 
    }

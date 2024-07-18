@@ -77,12 +77,12 @@ HRESULT CD3DTab::InitializeIndependent()
    m_hrInitializeIndependent = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, m_ComPtrD2DFactory1.ReleaseAndGetAddressOf());
    if(SUCCEEDED(m_hrInitializeIndependent))
    {
-      m_ComPtrIDWriteFactory1.ReleaseAndGetAddressOf();
-      m_hrInitializeIndependent = ::DWriteCoreCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory1), &m_ComPtrIDWriteFactory1);
+      m_ComPtrIDWriteFactory7.ReleaseAndGetAddressOf();
+      m_hrInitializeIndependent = ::DWriteCoreCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &m_ComPtrIDWriteFactory7);
    }
    if(SUCCEEDED(m_hrInitializeIndependent))
    {
-      m_hrInitializeIndependent = m_ComPtrIDWriteFactory1->CreateTextFormat(L"Verdana", __nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
+      m_hrInitializeIndependent = m_ComPtrIDWriteFactory7->CreateTextFormat(L"Verdana", __nullptr, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
          DWRITE_FONT_STRETCH_NORMAL, 25, L"en-US", m_ComPtrDWriteTextFormat0.ReleaseAndGetAddressOf());
    }
    if(SUCCEEDED(m_hrInitializeIndependent))
