@@ -7,7 +7,7 @@
 
 #pragma comment(linker, "/defaultlib:d3d11.lib")
 #pragma comment(linker, "/defaultlib:d2d1.lib")
-#pragma comment(linker, "/defaultlib:dwrite.lib")
+#pragma comment(linker, "/defaultlib:dwritecore.lib")
 using namespace DirectX;
 
 CDWriteTab::CDWriteTab() :
@@ -151,7 +151,7 @@ HRESULT CDWriteTab::CreateDeviceIndependentResources()
    if(SUCCEEDED(hResult))
    {
       m_CComPtrDWriteFactory1.Release();
-      hResult = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory1),
+      hResult = ::DWriteCoreCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory1),
          reinterpret_cast<IUnknown**>(&m_CComPtrDWriteFactory1));
 
    }

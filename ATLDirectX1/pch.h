@@ -30,7 +30,7 @@
 #include <d2d1_1.h>
 #include <d2d1_1helper.h>
 #include <d3d11_1.h>
-#include <dwrite_1.h>
+#include <dwrite_core.h>
 #include <dxgi1_2.h>
 #include <DirectXMath.h>
 #include <wincodec.h>
