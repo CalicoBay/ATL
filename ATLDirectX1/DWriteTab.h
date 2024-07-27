@@ -75,7 +75,7 @@ protected:
    //Direct2D
    CComPtr<ID2D1Factory1> m_CComPtrD2DFactory1;
    //DirectWrite
-   CComPtr<IDWriteFactory7> m_CComPtrDWriteFactory1;
+   CComPtr<IDWriteFactory7> m_CComPtrDWriteFactory7;
    CComPtr<IDWriteTextFormat> m_CComPtrDWriteTextFormat0;
    CComPtr<IDWriteTextLayout> m_CComPtrDWriteTextLayout0;
    //CalicoBay

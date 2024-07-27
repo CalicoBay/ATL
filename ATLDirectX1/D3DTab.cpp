@@ -78,7 +78,7 @@ HRESULT CD3DTab::InitializeIndependent()
    if(SUCCEEDED(m_hrInitializeIndependent))
    {
       m_ComPtrIDWriteFactory7.ReleaseAndGetAddressOf();
-      m_hrInitializeIndependent = ::DWriteCoreCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &m_ComPtrIDWriteFactory7);
+      m_hrInitializeIndependent = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &m_ComPtrIDWriteFactory7);
    }
    if(SUCCEEDED(m_hrInitializeIndependent))
    {

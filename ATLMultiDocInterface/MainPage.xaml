@@ -8,8 +8,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    TabFocusNavigation="Local">
-    <Grid Padding="10" Background="Gray">
+    TabFocusNavigation="Cycle">
+    <Grid Padding="2" Background="Gray">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>

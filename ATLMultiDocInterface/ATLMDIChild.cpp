@@ -108,21 +108,21 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
                //}
 
                // Subscribe to the TakeFocusRequested event, which will be raised when Xaml wants to move keyboard focus back to our window.
-               m_pWindowInfo->TakeFocusRequestedToken = m_pWindowInfo->DesktopWindowXamlSource.TakeFocusRequested(
-                  [this](winrt::DesktopWindowXamlSource const& /*sender*/, winrt::DesktopWindowXamlSourceTakeFocusRequestedEventArgs const& args) {
-                     if(args.Request().Reason() == winrt::XamlSourceFocusNavigationReason::First)
-                     {
-                        // The reason "First" means the user is tabbing forward, so put the focus on the button in the tab order
-                        // after the DesktopWindowXamlSource.
-                        m_Static.SetFocus(); //::SetFocus(m_hwndXamlIsland);
-                     }
-                     else if(args.Request().Reason() == winrt::XamlSourceFocusNavigationReason::Last)
-                     {
-                        // The reason "Last" means the user is tabbing backward (shift-tab, so put the focus on button prior to
-                        // the DesktopWindowXamlSource.
-                        m_Static.SetFocus(); //::SetFocus(m_hwndXamlIsland);
-                     }
-                  });
+               //m_pWindowInfo->TakeFocusRequestedToken = m_pWindowInfo->DesktopWindowXamlSource.TakeFocusRequested(
+               //   [this](winrt::DesktopWindowXamlSource const& /*sender*/, winrt::DesktopWindowXamlSourceTakeFocusRequestedEventArgs const& args) {
+               //      if(args.Request().Reason() == winrt::XamlSourceFocusNavigationReason::First)
+               //      {
+               //         // The reason "First" means the user is tabbing forward, so put the focus on the button in the tab order
+               //         // after the DesktopWindowXamlSource.
+               //         m_Static.SetFocus(); //::SetFocus(m_hwndXamlIsland);
+               //      }
+               //      else if(args.Request().Reason() == winrt::XamlSourceFocusNavigationReason::Last)
+               //      {
+               //         // The reason "Last" means the user is tabbing backward (shift-tab, so put the focus on button prior to
+               //         // the DesktopWindowXamlSource.
+               //         m_Static.SetFocus(); //::SetFocus(m_hwndXamlIsland);
+               //      }
+               //   });
             }
          }
       }
@@ -131,20 +131,26 @@ LRESULT CATLMDIChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam, 
 	return 0;
 }
 
-LRESULT CATLMDIChild::OnMDIActivate(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+LRESULT CATLMDIChild::OnSetFocus(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
-   if(HWND(lParam) == m_hWnd)
-   {
-      m_bActivated = true;
-      m_pWindowInfo->LastFocusedWindow = ::GetFocus();
-   }
-   else if(HWND(wParam) == m_hWnd)
-   {
-      m_bActivated = false;
-      ::SetFocus(m_pWindowInfo->LastFocusedWindow);
-   }
+   ::SetFocus(m_hwndXamlIsland);
    return 0;
 }
+
+//LRESULT CATLMDIChild::OnMDIActivate(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+//{
+//   if(HWND(lParam) == m_hWnd)
+//   {
+//      m_bActivated = true;
+//      m_pWindowInfo->LastFocusedWindow = ::GetFocus();
+//   }
+//   else if(HWND(wParam) == m_hWnd)
+//   {
+//      m_bActivated = false;
+//      ::SetFocus(m_pWindowInfo->LastFocusedWindow);
+//   }
+//   return 0;
+//}
 
 LRESULT CATLMDIChild::OnNcDestroy(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {

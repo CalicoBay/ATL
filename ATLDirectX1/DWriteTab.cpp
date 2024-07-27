@@ -7,7 +7,7 @@
 
 #pragma comment(linker, "/defaultlib:d3d11.lib")
 #pragma comment(linker, "/defaultlib:d2d1.lib")
-#pragma comment(linker, "/defaultlib:dwritecore.lib")
+#pragma comment(linker, "/defaultlib:dwrite.lib")
 using namespace DirectX;
 
 CDWriteTab::CDWriteTab() :
@@ -150,15 +150,15 @@ HRESULT CDWriteTab::CreateDeviceIndependentResources()
    HRESULT hResult = ::D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_CComPtrD2DFactory1);
    if(SUCCEEDED(hResult))
    {
-      m_CComPtrDWriteFactory1.Release();
-      hResult = ::DWriteCoreCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7),
-         reinterpret_cast<IUnknown**>(&m_CComPtrDWriteFactory1));
+      m_CComPtrDWriteFactory7.Release();
+      hResult = ::DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7),
+         reinterpret_cast<IUnknown**>(&m_CComPtrDWriteFactory7));
 
    }
    if(SUCCEEDED(hResult))
    {//46.0 fills the 8.5 inch page with the row of '='s
-      m_layoutEditor.SetFactory(m_CComPtrDWriteFactory1);
-      hResult = m_CComPtrDWriteFactory1->CreateTextFormat(L"Gabriola", __nullptr, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 18.0f, L"en-US", &m_CComPtrDWriteTextFormat0);
+      m_layoutEditor.SetFactory(m_CComPtrDWriteFactory7);
+      hResult = m_CComPtrDWriteFactory7->CreateTextFormat(L"Gabriola", __nullptr, DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 18.0f, L"en-US", &m_CComPtrDWriteTextFormat0);
    }
    if(SUCCEEDED(hResult))
    {
@@ -232,7 +232,7 @@ HRESULT CDWriteTab::CreateDeviceIndependentResources()
    {
       float fX = 8.5f * dpiX;
       float fY = 11.0f * dpiY;
-      hResult = m_CComPtrDWriteFactory1->CreateTextLayout(m_sUnicode, m_sUnicode.GetLength(), m_CComPtrDWriteTextFormat0, fX, fY, &m_CComPtrDWriteTextLayout0);
+      hResult = m_CComPtrDWriteFactory7->CreateTextLayout(m_sUnicode, m_sUnicode.GetLength(), m_CComPtrDWriteTextFormat0, fX, fY, &m_CComPtrDWriteTextLayout0);
       if(SUCCEEDED(hResult))
       {
          fX = m_CComPtrDWriteTextLayout0->GetMaxWidth();
@@ -359,7 +359,7 @@ HRESULT CDWriteTab::CreateDeviceResources()
    hResult = m_CComPtrRenderTarget.CoCreateInstance(CLSID_RenderTarget, __nullptr, CLSCTX_INPROC_SERVER);
    if(SUCCEEDED(hResult))
    {
-      hResult = m_CComPtrRenderTarget->CreateTarget(m_CComPtrD2DFactory1, m_CComPtrDWriteFactory1, m_hWnd);
+      hResult = m_CComPtrRenderTarget->CreateTarget(m_CComPtrD2DFactory1, m_CComPtrDWriteFactory7, m_hWnd);
    }
    return hResult;
 }
