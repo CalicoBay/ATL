@@ -191,122 +191,6 @@ LRESULT CATLMDIFrame::OnMDIDestroy(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL
 	return 0;
 }
 
-
-LRESULT CALLBACK CATLMDIFrame::FrameWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	//CATLMDIFrame* thisFrame = (CATLMDIFrame*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
-	//Normally the above is what one would do, but the ATL framework injects the
-	//pointer to the CWindowImpl<CWinTraits> derived wrapper class, in the above HWND
-	//This behavior is not documented but can be observed if stepping through atlwin.h
-	CATLMDIFrame* thisFrame = (CATLMDIFrame*)hWnd;
-	BOOL bHandled = FALSE;
-	switch(uMsg)
-	{
-	case WM_CREATE:
-		{
-			LPCREATESTRUCT pCreateStruct = (LPCREATESTRUCT)lParam;
-			thisFrame->m_hPaneMenu = (HMENU)pCreateStruct->lpCreateParams;
-			CLIENTCREATESTRUCT ccs = {};
-			ccs.hWindowMenu = ::GetSubMenu(thisFrame->m_hPaneMenu, WINDOW_MENU_POSITION);
-			ccs.idFirstChild = FIRST_MDI_CHILD;
-
-			thisFrame->m_hMDIClient = ::CreateWindowEx(
-								0, _T("MDICLIENT"),0, 
-								WS_CLIPCHILDREN|WS_CHILD|WS_VISIBLE,
-								0, 0, 0, 0, thisFrame->m_hWnd, HMENU(IDF_PANE),
-								GetModuleHINSTANCE(), &ccs); 
-			//LRESULT lResult = thisFrame->OnFrameCreate(hWnd, uMsg, wParam, lParam, bHandled);
-			if(NULL == thisFrame->m_hMDIClient)
-			{
-				return -1;
-			}
-			
-			break;
-		}
-    case WM_NCDESTROY:
-		{
-			LONG_PTR pWndProc = ::GetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC);
-			LRESULT lResult = ::DefFrameProc(thisFrame->m_hWnd, thisFrame->m_hMDIClient, uMsg, wParam, lParam);
-			if(thisFrame->m_pfnSuperWindowProc != ::DefWindowProc && ::GetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC) == pWndProc)
-			{
-				::SetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC, (LONG_PTR)thisFrame->m_pfnSuperWindowProc);
-			}
-
-			HWND thisHWND = thisFrame->m_hWnd;
-			thisFrame->m_hWnd = NULL;
-			thisFrame->OnFinalMessage(thisHWND);
-
-			return lResult;
-		}
-
-	case WM_INITMENU:
-		{
-			thisFrame->OnInitMenu(uMsg, wParam, lParam, bHandled);
-			if(bHandled)
-			{
-				return 0;
-			}
-			break;
-		}
-
-	case WM_COMMAND:
-		{
-			switch(LOWORD(wParam))
-			{
-			case ID_FILE_NEW:
-				{
-					thisFrame->OnFileNew(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
-					break;
-				}
-			case ID_FILE_EXIT:
-				{
-					thisFrame->OnExit(thisFrame->m_hWnd, HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
-					break;
-				}
-			case ID_CLEAR_TEXT:
-				{
-					thisFrame->CommandDispatch(ID_CLEAR_TEXT, HWND(lParam), bHandled);
-					break;
-				}
-			case ID_SET_TEXT:
-				{
-					thisFrame->CommandDispatch(ID_SET_TEXT, HWND(lParam), bHandled);
-					break;
-				}
-			case ID_WINDOW_CASCADE:
-				{
-					::SendMessage(thisFrame->m_hMDIClient, WM_MDICASCADE, 0, 0);
-					break;
-				}
-			case ID_WINDOW_TILE_HORIZONTALLY:
-				{
-					::SendMessage(thisFrame->m_hMDIClient, WM_MDITILE, MDITILE_HORIZONTAL, 0);
-					break;
-				}
-			case ID_WINDOW_TILE_VERTICALLY:
-				{
-					::SendMessage(thisFrame->m_hMDIClient, WM_MDITILE, MDITILE_VERTICAL, 0);
-					break;
-				}
-			case ID_WINDOW_ARRANGE_ICONS:
-				{
-					::SendMessage(thisFrame->m_hMDIClient, WM_MDIICONARRANGE, 0, 0);
-					break;
-				}
-			case ID_HELP_ABOUT:
-				{
-					thisFrame->OnAboutBox(thisFrame->m_hWnd, HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
-					break;
-				}
-			}
-
-			break;
-		}
-	}
-
-	return ::DefFrameProc(thisFrame->m_hWnd, thisFrame->m_hMDIClient, uMsg, wParam, lParam);
-}
-
 VOID CATLMDIFrame::CommandDispatch(WORD wCommand, HWND hwnd, BOOL& bHandled)
 {
 	HWND hwndActive = HWND(::SendMessage(m_hMDIClient, WM_MDIGETACTIVE, 0, 0));
@@ -431,9 +315,122 @@ HRESULT CATLMDIModule::PostMessageLoop() throw()
 }
 
 
-CATLMDIModule _AtlModule;
+CATLMDIModule _AtlMDIModule;
 
+LRESULT CALLBACK CATLMDIFrame::FrameWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	//CATLMDIFrame* thisFrame = (CATLMDIFrame*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	//Normally the above is what one would do, but the ATL framework injects the
+	//pointer to the CWindowImpl<CWinTraits> derived wrapper class, in the above HWND
+	//This behavior is not documented but can be observed if stepping through atlwin.h
+	CATLMDIFrame* thisFrame = _AtlMDIModule.m_pFrame; //(CATLMDIFrame*)hWnd;
+	BOOL bHandled = FALSE;
+	switch(uMsg)
+	{
+	case WM_CREATE:
+	{
+		LPCREATESTRUCT pCreateStruct = (LPCREATESTRUCT)lParam;
+		thisFrame->m_hPaneMenu = (HMENU)pCreateStruct->lpCreateParams;
+		CLIENTCREATESTRUCT ccs = {};
+		ccs.hWindowMenu = ::GetSubMenu(thisFrame->m_hPaneMenu, WINDOW_MENU_POSITION);
+		ccs.idFirstChild = FIRST_MDI_CHILD;
 
+		thisFrame->m_hMDIClient = ::CreateWindowEx(
+			0, _T("MDICLIENT"), 0,
+			WS_CLIPCHILDREN | WS_CHILD | WS_VISIBLE,
+			0, 0, 0, 0, thisFrame->m_hWnd, HMENU(IDF_PANE),
+			GetModuleHINSTANCE(), &ccs);
+		//LRESULT lResult = thisFrame->OnFrameCreate(hWnd, uMsg, wParam, lParam, bHandled);
+		if(NULL == thisFrame->m_hMDIClient)
+		{
+			return -1;
+		}
+
+		break;
+	}
+	case WM_NCDESTROY:
+	{
+		LONG_PTR pWndProc = ::GetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC);
+		LRESULT lResult = ::DefFrameProc(thisFrame->m_hWnd, thisFrame->m_hMDIClient, uMsg, wParam, lParam);
+		if(thisFrame->m_pfnSuperWindowProc != ::DefWindowProc && ::GetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC) == pWndProc)
+		{
+			::SetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC, (LONG_PTR)thisFrame->m_pfnSuperWindowProc);
+		}
+
+		HWND thisHWND = thisFrame->m_hWnd;
+		thisFrame->m_hWnd = NULL;
+		thisFrame->OnFinalMessage(thisHWND);
+
+		return lResult;
+	}
+
+	case WM_INITMENU:
+	{
+		thisFrame->OnInitMenu(uMsg, wParam, lParam, bHandled);
+		if(bHandled)
+		{
+			return 0;
+		}
+		break;
+	}
+
+	case WM_COMMAND:
+	{
+		switch(LOWORD(wParam))
+		{
+		case ID_FILE_NEW:
+		{
+			thisFrame->OnFileNew(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
+			break;
+		}
+		case ID_FILE_EXIT:
+		{
+			thisFrame->OnExit(thisFrame->m_hWnd, HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
+			break;
+		}
+		case ID_CLEAR_TEXT:
+		{
+			thisFrame->CommandDispatch(ID_CLEAR_TEXT, HWND(lParam), bHandled);
+			break;
+		}
+		case ID_SET_TEXT:
+		{
+			thisFrame->CommandDispatch(ID_SET_TEXT, HWND(lParam), bHandled);
+			break;
+		}
+		case ID_WINDOW_CASCADE:
+		{
+			::SendMessage(thisFrame->m_hMDIClient, WM_MDICASCADE, 0, 0);
+			break;
+		}
+		case ID_WINDOW_TILE_HORIZONTALLY:
+		{
+			::SendMessage(thisFrame->m_hMDIClient, WM_MDITILE, MDITILE_HORIZONTAL, 0);
+			break;
+		}
+		case ID_WINDOW_TILE_VERTICALLY:
+		{
+			::SendMessage(thisFrame->m_hMDIClient, WM_MDITILE, MDITILE_VERTICAL, 0);
+			break;
+		}
+		case ID_WINDOW_ARRANGE_ICONS:
+		{
+			::SendMessage(thisFrame->m_hMDIClient, WM_MDIICONARRANGE, 0, 0);
+			break;
+		}
+		case ID_HELP_ABOUT:
+		{
+			thisFrame->OnAboutBox(thisFrame->m_hWnd, HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
+			break;
+		}
+		}
+
+		break;
+	}
+	}
+
+	return ::DefFrameProc(thisFrame->m_hWnd, thisFrame->m_hMDIClient, uMsg, wParam, lParam);
+}
 
 //
 extern "C" int WINAPI _tWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPTSTR /*lpCmdLine*/, int nShowCmd)
@@ -444,7 +441,7 @@ extern "C" int WINAPI _tWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstan
 	// check_hresult(WINRT_IMPL_SHIM(winrt::Microsoft::UI::Xaml::Controls::IWebView2)->put_Source(*(void**)(&value)));
 	// even in the SimpleIslandApp, old school Win32 base, so it's not ATL related.
 
-	int iReturn = _AtlModule.WinMain(nShowCmd);
+	int iReturn = _AtlMDIModule.WinMain(nShowCmd);
 
 	return iReturn;
 }

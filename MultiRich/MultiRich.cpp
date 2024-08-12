@@ -356,239 +356,6 @@ LRESULT CMultiRichFrame::OnMDIDestroy(UINT nMsg, WPARAM wParam, LPARAM lParam, B
 	return 0;
 }
 
-
-LRESULT CALLBACK CMultiRichFrame::FrameWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	//CMultiRichFrame* thisFrame = (CMultiRichFrame*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
-	//Normally the above is what one would do, but the ATL framework injects the
-	//pointer to the CWindowImpl<CWinTraits> derived wrapper class, in the above HWND
-	//This behavior is not documented but can be observed if stepping through atlwin.h
-	CMultiRichFrame* thisFrame = (CMultiRichFrame*)hWnd;
-	BOOL bHandled = FALSE;
-	switch(uMsg)
-	{
-	case WM_CREATE:
-		{
-			CLIENTCREATESTRUCT ccs = {};
-			ccs.hWindowMenu = ::GetSubMenu(::GetMenu(thisFrame->m_hWnd), WINDOW_MENU_POSITION);
-			//TODO: Check out above if we need it
-			ccs.idFirstChild = FIRST_MDI_CHILD;
-
-			thisFrame->m_hMDIClient = ::CreateWindowEx(
-								0, _T("MDICLIENT"),0, 
-								WS_CLIPCHILDREN|WS_CHILD|WS_VISIBLE|WS_VSCROLL|WS_HSCROLL,
-								0, 0, 0, 0, thisFrame->m_hWnd, HMENU(ID_FIRST_PANE),
-								GetModuleHINSTANCE(), &ccs); 
-			if(NULL == thisFrame->m_hMDIClient)
-			{
-				return -1;
-			}
-
-			break;
-		}
-    case WM_NCDESTROY:
-		{
-			LONG_PTR pWndProc = ::GetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC);
-			LRESULT lResult = ::DefFrameProc(thisFrame->m_hWnd, thisFrame->m_hMDIClient, uMsg, wParam, lParam);
-			if(thisFrame->m_pfnSuperWindowProc != ::DefWindowProc && ::GetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC) == pWndProc)
-			{
-				::SetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC, (LONG_PTR)thisFrame->m_pfnSuperWindowProc);
-			}
-
-			HWND thisHWND = thisFrame->m_hWnd;
-			thisFrame->m_hWnd = NULL;
-			thisFrame->OnFinalMessage(thisHWND);
-
-			return lResult;
-		}
-	case WM_INITMENU:
-		{
-			thisFrame->OnInitMenu(uMsg, wParam, lParam, bHandled);
-			if(bHandled)
-			{
-				return 0;
-			}
-			break;
-		}
-
-	case WM_COMMAND:
-		{
-			switch(LOWORD(wParam))
-			{
-			case ID_FILE_NEW:
-				{
-					thisFrame->OnFileNew(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
-					break;
-				}
-			case ID_FILE_OPEN:
-				{
-					thisFrame->OnFileOpen(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
-					break;
-				}
-			case ID_FILE_SAVE:
-				{
-					thisFrame->OnFileSave(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
-					break;
-				}
-			case ID_FILE_SAVE_AS:
-				{
-					thisFrame->OnFileSaveAs(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
-					break;
-				}
-			case ID_FILE_EXIT:
-				{
-					thisFrame->OnExit(thisFrame->m_hWnd, HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
-					break;
-				}
-			case ID_EDIT_FIND:
-				{
-					if(__nullptr == s_hwndFindDlg)
-					{
-						InitFIND();
-						s_hwndFindDlg = ::FindText(&s_FIND);
-						DWORD dwCommDlgError = ::CommDlgExtendedError();
-					}
-					else
-					{
-						::SetFocus(s_hwndFindDlg);
-					}
-					break;
-				}
-			case ID_EDIT_REPEAT:
-				{
-					BOOL bHandled = TRUE;
-					s_FIND.Flags |= FR_DOWN;
-					thisFrame->ChildDispatch(false, ID_EDIT_FIND, LPARAM(&s_FIND), bHandled);
-					break;
-				}
-			case ID_EDIT_REPEAT_UP:
-				{
-					BOOL bHandled = TRUE;
-					s_FIND.Flags &= ~FR_DOWN;
-					thisFrame->ChildDispatch(false, ID_EDIT_FIND, LPARAM(&s_FIND), bHandled);
-					break;
-				}
-			case ID_EDIT_REPLACE:
-				{
-					if(__nullptr == s_hwndFindReplaceDlg)
-					{
-						InitFINDREPLACE();
-						s_hwndFindReplaceDlg = ::ReplaceText(&s_FINDREPLACE);
-						DWORD dwCommDlgError = ::CommDlgExtendedError();
-					}
-					else
-					{
-						::SetFocus(s_hwndFindReplaceDlg);
-					}
-					break;
-				}
-			case ID_EDIT_CLEAR:
-			case ID_EDIT_CLEAR_ALL:
-			case ID_EDIT_COPY:
-			case ID_EDIT_CUT:
-			case ID_EDIT_PASTE:
-			case ID_EDIT_PASTE_LINK:
-			case ID_EDIT_PASTE_SPECIAL:
-			case ID_EDIT_SELECT_ALL:
-			case ID_EDIT_UNDO:
-			case ID_EDIT_REDO:
-				{
-					WORD wCommand = LOWORD(wParam);
-					thisFrame->ChildDispatch(0, wCommand, lParam, bHandled);
-					break;
-				}
-			case ID_WINDOW_CASCADE:
-				{
-					::SendMessage(thisFrame->m_hMDIClient, WM_MDICASCADE, 0, 0);
-					break;
-				}
-			case ID_WINDOW_TILE_HORIZONTALLY:
-				{
-					::SendMessage(thisFrame->m_hMDIClient, WM_MDITILE, MDITILE_HORIZONTAL, 0);
-					break;
-				}
-			case ID_WINDOW_TILE_VERTICALLY:
-				{
-					::SendMessage(thisFrame->m_hMDIClient, WM_MDITILE, MDITILE_VERTICAL, 0);
-					break;
-				}
-			case ID_WINDOW_ARRANGE_ICONS:
-				{
-					::SendMessage(thisFrame->m_hMDIClient, WM_MDIICONARRANGE, 0, 0);
-					break;
-				}
-			case ID_HELP_ABOUT:
-				{
-					thisFrame->OnAboutBox(thisFrame->m_hWnd, HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
-					break;
-				}
-			case ID_FILE_MRU_FIRST:
-			case ID_FILE_MRU_FILE2:
-			case ID_FILE_MRU_FILE3:
-			case ID_FILE_MRU_FILE4:
-			case ID_FILE_MRU_FILE5:
-			case ID_FILE_MRU_FILE6:
-			case ID_FILE_MRU_FILE7:
-			case ID_FILE_MRU_FILE8:
-			case ID_FILE_MRU_FILE9:
-			case ID_FILE_MRU_FILE10:
-			case ID_FILE_MRU_FILE11:
-			case ID_FILE_MRU_FILE12:
-			case ID_FILE_MRU_FILE13:
-			case ID_FILE_MRU_FILE14:
-			case ID_FILE_MRU_FILE15:
-			case ID_FILE_MRU_LAST:
-				{
-					thisFrame->OnOpenRecentFile(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
-				}
-			}
-
-			break;
-		}
-	default:
-		{
-			if(s_FindReplaceMsg == uMsg)
-			{
-				LPFINDREPLACE pFindReplace = LPFINDREPLACE(lParam);
-				if(FR_DIALOGTERM & pFindReplace->Flags)
-				{
-					if(__nullptr == pFindReplace->lpstrReplaceWith)
-					{
-						s_hwndFindDlg = __nullptr;
-					}
-					else
-					{
-						s_hwndFindReplaceDlg = __nullptr;
-					}
-
-					return 0;
-				}
-
-				BOOL bHandled = TRUE;
-				LRESULT lResult = 0;
-				if(FR_FINDNEXT & pFindReplace->Flags)
-				{
-					thisFrame->ChildDispatch(false, ID_EDIT_FIND, LPARAM(pFindReplace), bHandled);
-				}
-				else if(FR_REPLACE & pFindReplace->Flags)
-				{
-					thisFrame->ChildDispatch(true, ID_EDIT_FIND, LPARAM(pFindReplace), bHandled);
-				}
-				else if(FR_REPLACEALL & pFindReplace->Flags)
-				{
-					do
-					{
-						lResult = thisFrame->ChildDispatch(true, ID_EDIT_FIND, LPARAM(pFindReplace), bHandled);
-					}while(1 == lResult);
-				}
-				return 0;
-			}
-		}
-	}
-
-	return ::DefFrameProc(thisFrame->m_hWnd, (NULL == thisFrame ? NULL : thisFrame->m_hMDIClient), uMsg, wParam, lParam);
-}
-
 LRESULT CMultiRichFrame::ChildDispatch(WORD wParamHi, WORD wCommand, LPARAM lParam, BOOL& bHandled)
 {
 	LRESULT lr = 0;
@@ -724,15 +491,244 @@ HRESULT CMultiRichModule::PostMessageLoop() throw()
 	return hr;
 }
 
+CMultiRichModule _AtlMultiRichModule;
 
-CMultiRichModule _AtlModule;
+LRESULT CALLBACK CMultiRichFrame::FrameWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	//CMultiRichFrame* thisFrame = (CMultiRichFrame*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	//Normally the above is what one would do, but the ATL framework injects the
+	//pointer to the CWindowImpl<CWinTraits> derived wrapper class, in the above HWND
+	//This behavior is not documented but can be observed if stepping through atlwin.h
+	CMultiRichFrame* thisFrame = _AtlMultiRichModule.m_pFrame; //(CMultiRichFrame*)hWnd;
+	BOOL bHandled = FALSE;
+	switch(uMsg)
+	{
+	case WM_CREATE:
+	{
+		CLIENTCREATESTRUCT ccs = {};
+		ccs.hWindowMenu = ::GetSubMenu(::GetMenu(thisFrame->m_hWnd), WINDOW_MENU_POSITION);
+		//TODO: Check out above if we need it
+		ccs.idFirstChild = FIRST_MDI_CHILD;
 
+		thisFrame->m_hMDIClient = ::CreateWindowEx(
+			0, _T("MDICLIENT"), 0,
+			WS_CLIPCHILDREN | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL,
+			0, 0, 0, 0, thisFrame->m_hWnd, HMENU(ID_FIRST_PANE),
+			GetModuleHINSTANCE(), &ccs);
+		if(NULL == thisFrame->m_hMDIClient)
+		{
+			return -1;
+		}
 
+		break;
+	}
+	case WM_NCDESTROY:
+	{
+		LONG_PTR pWndProc = ::GetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC);
+		LRESULT lResult = ::DefFrameProc(thisFrame->m_hWnd, thisFrame->m_hMDIClient, uMsg, wParam, lParam);
+		if(thisFrame->m_pfnSuperWindowProc != ::DefWindowProc && ::GetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC) == pWndProc)
+		{
+			::SetWindowLongPtr(thisFrame->m_hWnd, GWLP_WNDPROC, (LONG_PTR)thisFrame->m_pfnSuperWindowProc);
+		}
+
+		HWND thisHWND = thisFrame->m_hWnd;
+		thisFrame->m_hWnd = NULL;
+		thisFrame->OnFinalMessage(thisHWND);
+
+		return lResult;
+	}
+	case WM_INITMENU:
+	{
+		thisFrame->OnInitMenu(uMsg, wParam, lParam, bHandled);
+		if(bHandled)
+		{
+			return 0;
+		}
+		break;
+	}
+
+	case WM_COMMAND:
+	{
+		switch(LOWORD(wParam))
+		{
+		case ID_FILE_NEW:
+		{
+			thisFrame->OnFileNew(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
+			break;
+		}
+		case ID_FILE_OPEN:
+		{
+			thisFrame->OnFileOpen(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
+			break;
+		}
+		case ID_FILE_SAVE:
+		{
+			thisFrame->OnFileSave(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
+			break;
+		}
+		case ID_FILE_SAVE_AS:
+		{
+			thisFrame->OnFileSaveAs(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
+			break;
+		}
+		case ID_FILE_EXIT:
+		{
+			thisFrame->OnExit(thisFrame->m_hWnd, HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
+			break;
+		}
+		case ID_EDIT_FIND:
+		{
+			if(__nullptr == s_hwndFindDlg)
+			{
+				InitFIND();
+				s_hwndFindDlg = ::FindText(&s_FIND);
+				DWORD dwCommDlgError = ::CommDlgExtendedError();
+			}
+			else
+			{
+				::SetFocus(s_hwndFindDlg);
+			}
+			break;
+		}
+		case ID_EDIT_REPEAT:
+		{
+			BOOL bHandled = TRUE;
+			s_FIND.Flags |= FR_DOWN;
+			thisFrame->ChildDispatch(false, ID_EDIT_FIND, LPARAM(&s_FIND), bHandled);
+			break;
+		}
+		case ID_EDIT_REPEAT_UP:
+		{
+			BOOL bHandled = TRUE;
+			s_FIND.Flags &= ~FR_DOWN;
+			thisFrame->ChildDispatch(false, ID_EDIT_FIND, LPARAM(&s_FIND), bHandled);
+			break;
+		}
+		case ID_EDIT_REPLACE:
+		{
+			if(__nullptr == s_hwndFindReplaceDlg)
+			{
+				InitFINDREPLACE();
+				s_hwndFindReplaceDlg = ::ReplaceText(&s_FINDREPLACE);
+				DWORD dwCommDlgError = ::CommDlgExtendedError();
+			}
+			else
+			{
+				::SetFocus(s_hwndFindReplaceDlg);
+			}
+			break;
+		}
+		case ID_EDIT_CLEAR:
+		case ID_EDIT_CLEAR_ALL:
+		case ID_EDIT_COPY:
+		case ID_EDIT_CUT:
+		case ID_EDIT_PASTE:
+		case ID_EDIT_PASTE_LINK:
+		case ID_EDIT_PASTE_SPECIAL:
+		case ID_EDIT_SELECT_ALL:
+		case ID_EDIT_UNDO:
+		case ID_EDIT_REDO:
+		{
+			WORD wCommand = LOWORD(wParam);
+			thisFrame->ChildDispatch(0, wCommand, lParam, bHandled);
+			break;
+		}
+		case ID_WINDOW_CASCADE:
+		{
+			::SendMessage(thisFrame->m_hMDIClient, WM_MDICASCADE, 0, 0);
+			break;
+		}
+		case ID_WINDOW_TILE_HORIZONTALLY:
+		{
+			::SendMessage(thisFrame->m_hMDIClient, WM_MDITILE, MDITILE_HORIZONTAL, 0);
+			break;
+		}
+		case ID_WINDOW_TILE_VERTICALLY:
+		{
+			::SendMessage(thisFrame->m_hMDIClient, WM_MDITILE, MDITILE_VERTICAL, 0);
+			break;
+		}
+		case ID_WINDOW_ARRANGE_ICONS:
+		{
+			::SendMessage(thisFrame->m_hMDIClient, WM_MDIICONARRANGE, 0, 0);
+			break;
+		}
+		case ID_HELP_ABOUT:
+		{
+			thisFrame->OnAboutBox(thisFrame->m_hWnd, HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
+			break;
+		}
+		case ID_FILE_MRU_FIRST:
+		case ID_FILE_MRU_FILE2:
+		case ID_FILE_MRU_FILE3:
+		case ID_FILE_MRU_FILE4:
+		case ID_FILE_MRU_FILE5:
+		case ID_FILE_MRU_FILE6:
+		case ID_FILE_MRU_FILE7:
+		case ID_FILE_MRU_FILE8:
+		case ID_FILE_MRU_FILE9:
+		case ID_FILE_MRU_FILE10:
+		case ID_FILE_MRU_FILE11:
+		case ID_FILE_MRU_FILE12:
+		case ID_FILE_MRU_FILE13:
+		case ID_FILE_MRU_FILE14:
+		case ID_FILE_MRU_FILE15:
+		case ID_FILE_MRU_LAST:
+		{
+			thisFrame->OnOpenRecentFile(HIWORD(wParam), LOWORD(wParam), (HWND)lParam, bHandled);
+		}
+		}
+
+		break;
+	}
+	default:
+	{
+		if(s_FindReplaceMsg == uMsg)
+		{
+			LPFINDREPLACE pFindReplace = LPFINDREPLACE(lParam);
+			if(FR_DIALOGTERM & pFindReplace->Flags)
+			{
+				if(__nullptr == pFindReplace->lpstrReplaceWith)
+				{
+					s_hwndFindDlg = __nullptr;
+				}
+				else
+				{
+					s_hwndFindReplaceDlg = __nullptr;
+				}
+
+				return 0;
+			}
+
+			BOOL bHandled = TRUE;
+			LRESULT lResult = 0;
+			if(FR_FINDNEXT & pFindReplace->Flags)
+			{
+				thisFrame->ChildDispatch(false, ID_EDIT_FIND, LPARAM(pFindReplace), bHandled);
+			}
+			else if(FR_REPLACE & pFindReplace->Flags)
+			{
+				thisFrame->ChildDispatch(true, ID_EDIT_FIND, LPARAM(pFindReplace), bHandled);
+			}
+			else if(FR_REPLACEALL & pFindReplace->Flags)
+			{
+				do
+				{
+					lResult = thisFrame->ChildDispatch(true, ID_EDIT_FIND, LPARAM(pFindReplace), bHandled);
+				} while(1 == lResult);
+			}
+			return 0;
+		}
+	}
+	}
+
+	return ::DefFrameProc(thisFrame->m_hWnd, thisFrame->m_hMDIClient, uMsg, wParam, lParam);
+}
 
 //
 extern "C" int WINAPI _tWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, 
 								LPTSTR /*lpCmdLine*/, int nShowCmd)
 {
-	return _AtlModule.WinMain(nShowCmd);
+	return _AtlMultiRichModule.WinMain(nShowCmd);
 }
 
