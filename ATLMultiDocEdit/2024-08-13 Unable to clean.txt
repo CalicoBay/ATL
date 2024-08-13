@@ -1,0 +1,8 @@
+1>------ Clean started: Project: ATLMDI, Configuration: Debug x64 ------
+1>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppClean.targets(77,5): warning : The process cannot access the file 'd:\devops\corne\repos\calicobay\atl\atlmultidocinterface\generated files\app.xaml.g.h' because it is being used by another process.
+1>D:\DevOps\corne\Repos\CalicoBay\ATL\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets(137,9): error MSB3061: Unable to delete file "Generated Files\App.xaml.g.h". The process cannot access the file 'D:\DevOps\corne\Repos\CalicoBay\ATL\ATLMultiDocInterface\Generated Files\App.xaml.g.h' because it is being used by another process.
+1>D:\DevOps\corne\Repos\CalicoBay\ATL\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets(137,9): error MSB3061: Unable to delete file "Generated Files\winrt\Windows.UI.Xaml.h". The process cannot access the file 'D:\DevOps\corne\Repos\CalicoBay\ATL\ATLMultiDocInterface\Generated Files\winrt\Windows.UI.Xaml.h' because it is being used by another process.
+1>D:\DevOps\corne\Repos\CalicoBay\ATL\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.targets(137,9): error MSB3061: Unable to delete file "Generated Files\winrt\Windows.UI.Xaml.Interop.h". The process cannot access the file 'D:\DevOps\corne\Repos\CalicoBay\ATL\ATLMultiDocInterface\Generated Files\winrt\Windows.UI.Xaml.Interop.h' because it is being used by another process.
+1>Done building project "ATLMDI.vcxproj" -- FAILED.
+========== Clean: 0 succeeded, 1 failed, 0 skipped ==========
+========== Clean completed at 12:17 and took 00.321 seconds ==========
