@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATLMDI", "ATLMultiDocInterf
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATLDirectX1", "ATLDirectX1\ATLDirectX1.vcxproj", "{5888A5FC-D729-43FD-825C-DC9ECD17E768}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ATLXAML", "ATLMultiXamlInterface\ATLXAML.vcxproj", "{EA348816-8D37-4527-AAC6-7C40FF491630}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -81,6 +83,18 @@ Global
 		{5888A5FC-D729-43FD-825C-DC9ECD17E768}.Release|Win32.Build.0 = Release|Win32
 		{5888A5FC-D729-43FD-825C-DC9ECD17E768}.Release|x64.ActiveCfg = Release|x64
 		{5888A5FC-D729-43FD-825C-DC9ECD17E768}.Release|x64.Build.0 = Release|x64
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Debug|Win32.Build.0 = Debug|Win32
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Debug|x64.ActiveCfg = Debug|x64
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Debug|x64.Build.0 = Debug|x64
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Release|Mixed Platforms.Build.0 = Release|x64
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Release|Win32.ActiveCfg = Release|Win32
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Release|Win32.Build.0 = Release|Win32
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Release|x64.ActiveCfg = Release|x64
+		{EA348816-8D37-4527-AAC6-7C40FF491630}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
