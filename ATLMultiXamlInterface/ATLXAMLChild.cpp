@@ -7,7 +7,7 @@ static short endX = 0;
 
 CATLXAMLChild::CATLXAMLChild(void) :
     m_Edit(_T("Edit"), this, 1),
-    m_Static(_T("Edit"), this, 2),
+    m_Static(_T("Static"), this, 2),
     m_hwndFrame(0),
     m_pMDIFrame(__nullptr),
     m_hSplitCursor(__nullptr)
@@ -15,8 +15,8 @@ CATLXAMLChild::CATLXAMLChild(void) :
     ::memset(&m_RectStatic, 0, sizeof(RECT));
     ::memset(&m_RectEdit, 0, sizeof(RECT));
     m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZEWE));
-    m_sContent = _T("TODO: Something with this space!");
-    m_sStaticContent = _T("HWND hwndStatic = m_Static.Create(m_hWnd, rcStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY);");
+    m_sContent = _T("<Page xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x = \"http://schemas.microsoft.com/winfx/2006/xaml\" > <Border BorderBrush = \"Red\" BorderThickness = \"12\" CornerRadius = \"24\" Background = \"Yellow\" HorizontalAlignment = \"Center\" VerticalAlignment = \"Center\"> <TextBlock Text = \"Hello XAML Cruncher!\" FontSize = \"48\" Foreground = \"Blue\" Margin = \"24\" / > < / Border> < / Page>");
+    m_sStaticContent = _T("HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE);");
 }
 
 
