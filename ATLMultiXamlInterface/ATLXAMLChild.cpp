@@ -42,16 +42,16 @@ LRESULT CATLXAMLChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam,
             m_sOriginalTitle = pMDICreate->szTitle;
             RECT rcClient;
             GetClientRect(&rcClient);
-            m_RectStatic.left = rcClient.left;
-            m_RectStatic.top = rcClient.top;
-            m_RectStatic.right = 250;
-            m_RectStatic.bottom = rcClient.bottom;
-
-            m_RectEdit.left = rcClient.left + 255;
+            m_RectEdit.left = rcClient.left;
             m_RectEdit.top = rcClient.top;
-            m_RectEdit.right = rcClient.right;
+            m_RectEdit.right = 250;
             m_RectEdit.bottom = rcClient.bottom;
-            HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY);
+
+            m_RectStatic.left = rcClient.left + 255;
+            m_RectStatic.top = rcClient.top;
+            m_RectStatic.right = rcClient.right;
+            m_RectStatic.bottom = rcClient.bottom;
+            HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE);// | WS_VSCROLL | ES_MULTILINE | ES_READONLY);
             HWND hwndEdit = m_Edit.Create(m_hWnd, m_RectEdit, m_sContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE);
             //if(0 != hwndEdit)
             //{
@@ -105,16 +105,22 @@ LRESULT CATLXAMLChild::OnSize(UINT, WPARAM, LPARAM, BOOL&)
     GetClientRect(&rcClient);
     m_RectEdit.top = m_RectStatic.top = rcClient.top;
     m_RectEdit.bottom = m_RectStatic.bottom = rcClient.bottom;
-    if(rcClient.right > (m_RectStatic.right + 150))
+    if(rcClient.right > (m_RectEdit.right + 150))
     {
-        m_RectEdit.right = rcClient.right;
+        m_RectStatic.right = rcClient.right;
     }
     else
     {
-        m_RectEdit.right = m_RectStatic.right + 150;
+        m_RectStatic.right = m_RectEdit.right + 150;
     }
-    m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);
-    m_Edit.SetWindowPos(HWND_TOP, &m_RectEdit, 0);
+    if(m_Static.IsWindow())
+    {
+        m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);
+    }
+    if(m_Edit.IsWindow())
+    {
+        m_Edit.SetWindowPos(HWND_TOP, &m_RectEdit, 0);
+    }
     return 0;
 }
 
@@ -152,8 +158,8 @@ LRESULT CATLXAMLChild::OnLButtonUp(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, 
 {
     endX = GET_X_LPARAM(lParam);
     short deltaX = endX - begX;
-    m_RectStatic.right += deltaX;
-    m_RectEdit.left += deltaX;
+    m_RectEdit.right += deltaX;
+    m_RectStatic.left += deltaX;
     m_Static.SetWindowPos(HWND_TOP, &m_RectStatic, 0);
     m_Edit.SetWindowPos(HWND_TOP, &m_RectEdit, 0);
     ::ClipCursor(NULL);
