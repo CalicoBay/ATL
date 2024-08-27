@@ -13,7 +13,7 @@ public:
     CATLXAMLFrame* m_pMDIFrame;
     RECT m_RectStatic, m_RectEdit;
     HCURSOR m_hSplitCursor;
-    CContainedWindow  m_Edit;
+    CContainedWindowT<ATLControls::CBOMEdit, CWinTraitsOR<WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE>>  m_Edit;
     CContainedWindow  m_Static;
     DECLARE_WND_CLASS(_T("ATLXAMLChild"))
     BEGIN_MSG_MAP(CATLXAMLChild)

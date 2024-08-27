@@ -52,7 +52,7 @@ LRESULT CATLXAMLChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam,
             m_RectStatic.right = rcClient.right;
             m_RectStatic.bottom = rcClient.bottom;
             HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE);// | WS_VSCROLL | ES_MULTILINE | ES_READONLY);
-            HWND hwndEdit = m_Edit.Create(m_hWnd, m_RectEdit, m_sContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE);
+            HWND hwndEdit = m_Edit.Create(this, 1, m_hWnd, m_RectEdit);//(m_hWnd, m_RectEdit, m_sContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE);
             //if(0 != hwndEdit)
             //{
             //   m_Edit.SetFocus();

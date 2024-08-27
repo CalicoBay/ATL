@@ -13,6 +13,8 @@
 // Windows Header Files:
 #include <windows.h>
 #include <shellapi.h>
+#include <ShObjIdl.h> // for IFileDialogEvents
+#include <commdlg.h>
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
 
 
@@ -20,13 +22,15 @@
 
 #include "resource.h"
 #include <atlbase.h>
+#include <atlfile.h>
 #include <atltypes.h>
 #include <atlwin.h>
 #include <atlstr.h>
 #include <vector>
 #include <algorithm>
 #include <functional>
-
+#include <strsafe.h>
+#include "AtlControls.h"
 // retrieve the HINSTANCE for the current DLL or EXE using this symbol that
 // the linker provides for every module, avoids the need for a global HINSTANCE variable
 // and provides access to this value for static libraries
