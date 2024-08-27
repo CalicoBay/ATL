@@ -15,7 +15,7 @@ CATLXAMLChild::CATLXAMLChild(void) :
     ::memset(&m_RectStatic, 0, sizeof(RECT));
     ::memset(&m_RectEdit, 0, sizeof(RECT));
     m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZEWE));
-    m_sContent = _T("<Page xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x = \"http://schemas.microsoft.com/winfx/2006/xaml\" > <Border BorderBrush = \"Red\" BorderThickness = \"12\" CornerRadius = \"24\" Background = \"Yellow\" HorizontalAlignment = \"Center\" VerticalAlignment = \"Center\"> <TextBlock Text = \"Hello XAML Cruncher!\" FontSize = \"48\" Foreground = \"Blue\" Margin = \"24\" / > < / Border> < / Page>");
+    m_sContent = _T("<Page xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"\r\n\txmlns:x = \"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n\t<Border BorderBrush=\"Red\"\r\n\t\tBorderThickness=\"12\"\r\n\t\tCornerRadius=\"24\"\r\n\t\tBackground=\"Yellow\"\r\n\t\tHorizontalAlignment=\"Center\"\r\n\t\tVerticalAlignment=\"Center\">\r\n\t<TextBlock Text=\"Hello XAML Cruncher!\"\r\n\t\tFontSize=\"48\"\r\n\t\tForeground=\"Blue\"\r\n\t\tMargin=\"24\" />\r\n\t</Border>\r\n</Page>");
     m_sStaticContent = _T("HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE);");
 }
 
