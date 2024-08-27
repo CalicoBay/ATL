@@ -8,7 +8,7 @@
 LRESULT CATLXAMLFrame::OnAboutBox(HWND hWnd, WORD, WORD, HWND, BOOL&)
 {
     CString sTitle;
-    sTitle.LoadStringW(IDS_PROJNAME);
+    (void)sTitle.LoadStringW(IDS_PROJNAME);
     ::ShellAbout(hWnd, sTitle, NULL, NULL);
     return 0;
 }
@@ -29,7 +29,7 @@ LRESULT CATLXAMLFrame::OnFileNew(WORD, WORD, HWND, BOOL&)
         }
         else
         {
-            sTitle.Format(_T("%s%d"), m_sUntitled, m_vecMDIChildren.size());
+            sTitle.Format(_T("%s%d"), (LPCTSTR)m_sUntitled, static_cast<int>(m_vecMDIChildren.size()));
         }
 
         pMDIChild->m_pfnSuperWindowProc = ::DefMDIChildProc;
