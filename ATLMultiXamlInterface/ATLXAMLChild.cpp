@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 #include "ATLXAMLChild.h"
 #include "ATLXAML.h"
 

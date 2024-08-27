@@ -1,7 +1,7 @@
 // ATLXAML.cpp : Implementation of WinMain
 
 
-#include "stdafx.h"
+#include "pch.h"
 #include "ATLXAMLChild.h"
 #include "ATLXAML.h"
 
