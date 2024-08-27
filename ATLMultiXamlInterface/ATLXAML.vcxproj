@@ -150,6 +150,7 @@
     <ResourceCompile Include="ATLXAML.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Include\ATLControls.h" />
     <ClInclude Include="ATLXAML.h" />
     <ClInclude Include="ATLXAMLChild.h" />
     <ClInclude Include="Resource.h" />
