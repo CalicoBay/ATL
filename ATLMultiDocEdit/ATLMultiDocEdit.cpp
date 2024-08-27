@@ -24,7 +24,7 @@ CATLMultiFrame::CATLMultiFrame():
 	m_hPregnantMenu(__nullptr),
 	m_hChildIcon(__nullptr)
 {
-	m_sUntitled.LoadStringW(IDS_UNTITLED);
+	(void)m_sUntitled.LoadStringW(IDS_UNTITLED);
 	s_FindReplaceMsg = ::RegisterWindowMessage(FINDMSGSTRING);
 }
 
@@ -59,7 +59,7 @@ VOID CATLMultiFrame::InitFINDREPLACE()
 LRESULT CATLMultiFrame::OnAboutBox(HWND hWnd, WORD , WORD , HWND , BOOL& )
 {
 	CString sTitle;
-	sTitle.LoadStringW(IDS_APP_TITLE);
+	(void)sTitle.LoadStringW(IDS_APP_TITLE);
     ::ShellAbout(hWnd, sTitle, NULL, NULL);
 	return 0;
 }
@@ -80,7 +80,7 @@ LRESULT CATLMultiFrame::OnFileNew(WORD, WORD, HWND, BOOL&)
 		}
 		else
 		{
-			sTitle.Format(_T("%s%d"), m_sUntitled, m_NewCount++);
+			sTitle.Format(_T("%s%d"), (LPCTSTR)m_sUntitled, m_NewCount++);
 		}
 
 		pMDIChild->GetWndClassInfo().m_wc.hIcon = m_hChildIcon;
@@ -398,7 +398,7 @@ HRESULT CATLMultiDocModule::PreMessageLoop(int nCmdShow) throw()
 	HMENU hPregnantMenu = ::LoadMenu(GetModuleHINSTANCE(), MAKEINTRESOURCE(IDR_TEXTTYPE));
 	HICON hIcon = ::LoadIcon(GetModuleHINSTANCE(), MAKEINTRESOURCE(IDI_ATLMULTIDOCEDIT));
 	CString sTitle;
-	sTitle.LoadStringW(IDS_APP_TITLE);
+	(void)sTitle.LoadStringW(IDS_APP_TITLE);
 	m_pFrame->GetWndClassInfo().m_wc.hIcon = hIcon;
 	HWND hwndFrame = m_pFrame->Create(0, rcPos, sTitle, 0, 0, hMainFrameMenu);//, m_pFrame);
 	if(__nullptr == hwndFrame)
