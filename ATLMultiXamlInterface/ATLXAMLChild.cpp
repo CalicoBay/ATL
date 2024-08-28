@@ -53,10 +53,11 @@ LRESULT CATLXAMLChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam,
             m_RectStatic.bottom = rcClient.bottom;
             HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE);// | WS_VSCROLL | ES_MULTILINE | ES_READONLY);
             HWND hwndEdit = m_Edit.Create(this, 1, m_hWnd, m_RectEdit);//(m_hWnd, m_RectEdit, m_sContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE);
-            //if(0 != hwndEdit)
-            //{
-            //   m_Edit.SetFocus();
-            //}
+            if(0 != hwndEdit)
+            {
+               m_Edit.SetSel(0, 1);
+               m_Edit.ReplaceSel((LPCTSTR)m_sContent);
+            }
         }
     }
 
@@ -66,8 +67,10 @@ LRESULT CATLXAMLChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam,
 LRESULT CATLXAMLChild::OnClearText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd, BOOL& /*bHandled*/)
 {
     m_sContent.Empty();
-    m_Edit.SendMessage(EM_SETSEL, 0, -1);
-    m_Edit.SendMessage(EM_REPLACESEL, FALSE, (LPARAM)m_sContent.GetString());
+    //m_Edit.SendMessage(EM_SETSEL, 0, -1);
+    //m_Edit.SendMessage(EM_REPLACESEL, FALSE, (LPARAM)m_sContent.GetString());
+    m_Edit.SetSel(0, -1);
+    m_Edit.ReplaceSel((LPCTSTR)m_sContent);
     //Invalidate();
     return 0;
 }
@@ -75,8 +78,10 @@ LRESULT CATLXAMLChild::OnClearText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hw
 LRESULT CATLXAMLChild::OnSetText(WORD /*wHiParam*/, WORD /*wLoParam*/, HWND hwnd, BOOL& /*bHandled*/)
 {
     m_sContent = _T("TODO: We need to get some text from a TaskDialog for instance.");
-    m_Edit.SendMessage(EM_SETSEL, 0, -1);
-    m_Edit.SendMessage(EM_REPLACESEL, FALSE, (LPARAM)m_sContent.GetString());
+    m_Edit.SetSel(0, -1);
+    m_Edit.ReplaceSel((LPCTSTR)m_sContent);
+    //m_Edit.SendMessage(EM_SETSEL, 0, -1);
+    //m_Edit.SendMessage(EM_REPLACESEL, FALSE, (LPARAM)m_sContent.GetString());
     //Invalidate();
     return 0;
 }
