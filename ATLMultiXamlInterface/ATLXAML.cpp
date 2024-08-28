@@ -200,6 +200,26 @@ LRESULT CALLBACK CATLXAMLFrame::FrameWindowProc(HWND hWnd, UINT uMsg, WPARAM wPa
             thisFrame->CommandDispatch(ID_SET_TEXT, HWND(lParam), bHandled);
             break;
         }
+        case ID_FILE_OPEN:
+        {
+            thisFrame->CommandDispatch(ID_FILE_OPEN, HWND(lParam), bHandled);
+            break;
+        }
+        case ID_FILE_CLOSE:
+        {
+            thisFrame->CommandDispatch(ID_FILE_CLOSE, HWND(lParam), bHandled);
+            break;
+        }
+        case ID_FILE_SAVE:
+        {
+            thisFrame->CommandDispatch(ID_FILE_SAVE, HWND(lParam), bHandled);
+            break;
+        }
+        case ID_FILE_SAVEAS:
+        {
+            thisFrame->CommandDispatch(ID_FILE_SAVEAS, HWND(lParam), bHandled);
+            break;
+        }
         case ID_WINDOW_CASCADE:
         {
             ::SendMessage(thisFrame->m_hMDIClient, WM_MDICASCADE, 0, 0);

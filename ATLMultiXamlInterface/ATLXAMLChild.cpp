@@ -15,7 +15,7 @@ CATLXAMLChild::CATLXAMLChild(void) :
     ::memset(&m_RectStatic, 0, sizeof(RECT));
     ::memset(&m_RectEdit, 0, sizeof(RECT));
     m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZEWE));
-    m_sContent = _T("<Page xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"\r\n\txmlns:x = \"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n\t<Border BorderBrush=\"Red\"\r\n\t\tBorderThickness=\"12\"\r\n\t\tCornerRadius=\"24\"\r\n\t\tBackground=\"Yellow\"\r\n\t\tHorizontalAlignment=\"Center\"\r\n\t\tVerticalAlignment=\"Center\">\r\n\t<TextBlock Text=\"Hello XAML Cruncher!\"\r\n\t\tFontSize=\"48\"\r\n\t\tForeground=\"Blue\"\r\n\t\tMargin=\"24\" />\r\n\t</Border>\r\n</Page>");
+    m_sContent = _T("<Page xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"\r\n\t\txmlns:x = \"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n\t<Border BorderBrush=\"Red\"\r\n\t\tBorderThickness=\"12\"\r\n\t\tCornerRadius=\"24\"\r\n\t\tBackground=\"Yellow\"\r\n\t\tHorizontalAlignment=\"Center\"\r\n\t\tVerticalAlignment=\"Center\">\r\n\t<TextBlock Text=\"Hello XAML Cruncher!\"\r\n\t\tFontSize=\"48\"\r\n\t\tForeground=\"Blue\"\r\n\t\tMargin=\"24\" />\r\n\t</Border>\r\n</Page>");
     m_sStaticContent = _T("HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE);");
 }
 
@@ -180,4 +180,25 @@ VOID CATLXAMLChild::OnFinalMessage(HWND /*hwnd*/)
     //Now that we have a pFrame no need to send, just call.
     m_pMDIFrame->OnMDIDestroy(WM_MDIDESTROY, wParam, LPARAM(this), bHandled);
     delete this;
+}
+
+LRESULT CATLXAMLChild::OnFileClose(WORD wHiParam, WORD wLoParam, HWND hwnd, BOOL& bHandled)
+{
+    MessageBox(_T("OnFileClose called"));
+    return 0;
+}
+LRESULT CATLXAMLChild::OnFileOpen(WORD, WORD, HWND, BOOL&)
+{
+    MessageBox(_T("OnFileOpen called"));
+    return 0;
+}
+LRESULT CATLXAMLChild::OnFileSave(WORD, WORD, HWND, BOOL& bHandled)
+{
+    MessageBox(_T("OnFileSave called"));
+    return 0;
+}
+LRESULT CATLXAMLChild::OnFileSaveAs(WORD, WORD, HWND, BOOL& bHandled)
+{
+    MessageBox(_T("OnFileSaveAs called"));
+    return 0;
 }

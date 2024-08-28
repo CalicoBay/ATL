@@ -19,6 +19,10 @@ public:
     BEGIN_MSG_MAP(CATLXAMLChild)
         COMMAND_ID_HANDLER(ID_CLEAR_TEXT, OnClearText)
         COMMAND_ID_HANDLER(ID_SET_TEXT, OnSetText)
+        COMMAND_ID_HANDLER(ID_FILE_CLOSE, OnFileClose)
+        COMMAND_ID_HANDLER(ID_FILE_OPEN, OnFileOpen)
+        COMMAND_ID_HANDLER(ID_FILE_SAVE, OnFileSave)
+        COMMAND_ID_HANDLER(ID_FILE_SAVEAS, OnFileSaveAs)
         MESSAGE_HANDLER(WM_CREATE, OnCreate)
         MESSAGE_HANDLER(WM_PAINT, OnPaint)
         MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
@@ -36,6 +40,10 @@ public:
     LRESULT OnLButtonDown(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnLButtonUp(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
     LRESULT OnSize(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+    LRESULT OnFileClose(WORD wHiParam, WORD wLoParam, HWND hwnd, BOOL& bHandled);
+    LRESULT OnFileOpen(WORD, WORD, HWND, BOOL&);
+    LRESULT OnFileSave(WORD, WORD, HWND, BOOL& bHandled);
+    LRESULT OnFileSaveAs(WORD, WORD, HWND, BOOL& bHandled);
     VOID OnFinalMessage(HWND /*hwnd*/);
 
 };
