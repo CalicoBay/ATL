@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ATLXAMLChild.h"
 #include "ATLXAML.h"
-//using namespace ATLControls;
+using namespace ATLControls;
 using namespace winrt;
 
 static short begX = 0;
@@ -57,8 +57,8 @@ LRESULT CATLXAMLChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam,
             HWND hwndEdit = m_Edit.Create(this, 1, m_hWnd, m_RectEdit);//(m_hWnd, m_RectEdit, m_sContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE);
             if(0 != hwndEdit)
             {
-               m_Edit.SetSel(0, 1);
-               m_Edit.ReplaceSel((LPCTSTR)m_sContent);
+                m_Edit.SetSel(0, 1);
+                m_Edit.ReplaceSel((LPCTSTR)m_sContent);
             }
         }
     }
@@ -186,38 +186,93 @@ VOID CATLXAMLChild::OnFinalMessage(HWND /*hwnd*/)
 
 LRESULT CATLXAMLChild::OnFileClose(WORD wHiParam, WORD wLoParam, HWND hwnd, BOOL& bHandled)
 {
-    MessageBox(_T("OnFileClose called"));
+    bool bWM_CLOSE = false;
+    if(0 == wLoParam)
+    {//This is from a WM_CLOSE message instead of ID_FILE_CLOSE command
+        bWM_CLOSE = true;
+    }
+
+    if(m_Edit.IsDirty())
+    {
+        int iResult;
+        if(SUCCEEDED(::TaskDialog(__nullptr, __nullptr, __nullptr, m_Edit.m_sActivePath, L"Do you wish to save your changes?", TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON, TD_WARNING_ICON, &iResult)))
+        {
+            if(IDYES == iResult)
+            {
+                OnFileSave(0, 0, 0, bHandled);
+            }
+            else if(IDCANCEL == iResult)
+            {
+                bHandled = TRUE;
+                if(!bWM_CLOSE)
+                {
+                    return 0;
+                }
+            }
+        }
+    }
+
+    if(!bHandled || !bWM_CLOSE)
+    {
+        if(__nullptr != m_Edit.m_File.m_h)
+        {
+            m_Edit.m_File.Close();
+        }
+
+        if(!bWM_CLOSE)
+        {//The window is staying open.
+            m_Edit.SetSel(0, -1, TRUE);
+            m_Edit.Clear();
+            m_Edit.SetModify(FALSE);
+        }
+
+        m_sFilePath.Empty();
+        WPARAM wParam = WM_SET_TITLE;
+        SetWindowText(m_sFilePath);
+        ::SendMessage(m_hwndFrame, WM_PARENTNOTIFY, wParam, (LPARAM)this);
+    }
+
+    if(!bWM_CLOSE)
+    {
+        bHandled = TRUE;
+    }
+
     return 0;
 }
 LRESULT CATLXAMLChild::OnFileOpen(WORD, WORD, HWND, BOOL&)
 {
     LRESULT lResult = 0;
-    com_ptr<IFileOpenDialog> cpFileDialog;
-    com_ptr<IShellItem> cpShellItem;
+    BOOL bHandled = TRUE;
+    if(m_Edit.IsDirty() && m_sFilePath.IsEmpty())
+    {
+        lResult = OnFileSaveAs(0, 0, 0, bHandled);
+    }
+    com_ptr<IFileOpenDialog> com_ptrFileDialog;
+    com_ptr<IShellItem> com_ptrShellItem;
 
     // CoCreate the dialog object.
-    HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(cpFileDialog.put()));
-    if (SUCCEEDED(hr))
+    HRESULT hr = ::CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(com_ptrFileDialog.put()));
+    if(SUCCEEDED(hr))
     {
         DWORD dwOptions;
-        hr = cpFileDialog->GetOptions(&dwOptions);
-        if (SUCCEEDED(hr))
+        hr = com_ptrFileDialog->GetOptions(&dwOptions);
+        if(SUCCEEDED(hr))
         {
-            hr = cpFileDialog->SetOptions(dwOptions | FOS_FORCEFILESYSTEM);
+            hr = com_ptrFileDialog->SetOptions(dwOptions | FOS_FORCEFILESYSTEM);
         }
-        if (SUCCEEDED(hr))
+        if(SUCCEEDED(hr))
         {
-            hr = cpFileDialog->Show(NULL);
+            hr = com_ptrFileDialog->Show(NULL);
         }
 
-        if (SUCCEEDED(hr))
+        if(SUCCEEDED(hr))
         {
-            hr = cpFileDialog->GetResult(cpShellItem.put());
-            if (SUCCEEDED(hr))
+            hr = com_ptrFileDialog->GetResult(com_ptrShellItem.put());
+            if(SUCCEEDED(hr))
             {
                 LPWSTR pwszPath;
-                hr = cpShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pwszPath);
-                if (SUCCEEDED(hr))
+                hr = com_ptrShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pwszPath);
+                if(SUCCEEDED(hr))
                 {
                     //OpenDocumentFile(pwszPath);
                     CString csMessage;
@@ -225,16 +280,21 @@ LRESULT CATLXAMLChild::OnFileOpen(WORD, WORD, HWND, BOOL&)
                     UINT64 cbTextLimit = m_Edit.GetLimitText();// cchTextLimit;
                     cbTextLimit = cbTextLimit * sizeof(TCHAR);
                     csMessage.Format(_T("%s\r\nEdit Box Byte Limit: %I64u"), pwszPath, cbTextLimit);//0x%08I32X
-                    INT_PTR iResult = ::MessageBox(__nullptr, csMessage, _T("To Be Opened!"), MB_YESNO);
-                    if (IDYES == iResult)
+                    int iResult;
+                    hr = ::TaskDialog(__nullptr, __nullptr, _T("Opening file"), csMessage, _T("Is this what you want?"), TDCBF_YES_BUTTON | TDCBF_NO_BUTTON, TD_INFORMATION_ICON, &iResult);
+                    if(SUCCEEDED(hr))
                     {
-                        //This will only be done after succesfully opening a file
-                        if (SUCCEEDED(m_Edit.OpenFile(pwszPath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, OPEN_EXISTING)))
+                        if(IDYES == iResult)
                         {
-                            m_sFilePath = pwszPath;
-                            SetWindowText(pwszPath);
-                            WPARAM wParam = WM_APP;
-                            ::SendMessage(m_hwndFrame, WM_PARENTNOTIFY, wParam, (LPARAM)this);
+                            //This will only be done after succesfully opening a file
+                            hr = m_Edit.OpenFile(pwszPath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, OPEN_EXISTING);
+                            if(SUCCEEDED(hr))
+                            {
+                                m_sFilePath = pwszPath;
+                                SetWindowText(pwszPath);
+                                WPARAM wParam = WM_SET_TITLE;
+                                ::SendMessage(m_hwndFrame, WM_PARENTNOTIFY, wParam, (LPARAM)this);
+                            }
                         }
                     }
                     ::CoTaskMemFree(pwszPath);
@@ -243,15 +303,75 @@ LRESULT CATLXAMLChild::OnFileOpen(WORD, WORD, HWND, BOOL&)
         }
     }
     m_Edit.SetFocus();
-    return lResult;
+    return static_cast<LRESULT>(hr);
 }
 LRESULT CATLXAMLChild::OnFileSave(WORD, WORD, HWND, BOOL& bHandled)
 {
-    MessageBox(_T("OnFileSave called"));
+    HRESULT hr = m_Edit.SaveFile();
+    if(S_OK != hr)
+    {
+        int iResult;
+        if(SUCCEEDED(::TaskDialog(__nullptr, __nullptr, __nullptr, __nullptr,
+            L"The file could not be saved! Do you wish to save your changes using another path?",
+            TDCBF_YES_BUTTON | TDCBF_CANCEL_BUTTON, TD_WARNING_ICON, &iResult)))
+        {
+            if(IDYES == iResult)
+            {
+                bHandled = FALSE;
+                OnFileSaveAs(0, 0, 0, bHandled);
+            }
+        }
+    }
+    m_Edit.SetFocus();
     return 0;
 }
 LRESULT CATLXAMLChild::OnFileSaveAs(WORD, WORD, HWND, BOOL& bHandled)
 {
-    MessageBox(_T("OnFileSaveAs called"));
-    return 0;
+    HRESULT hr;
+    com_ptr<IFileSaveDialog> cpFileDialog;
+    com_ptr<IShellItem> cpShellItem;
+    PWSTR wszFilePath = __nullptr;
+    hr = ::CoCreateInstance(CLSID_FileSaveDialog, __nullptr, CLSCTX_INPROC_SERVER, __uuidof(IFileSaveDialog), cpFileDialog.put_void());
+    if(SUCCEEDED(hr))
+    {
+        hr = cpFileDialog->SetFileTypes(ARRAYSIZE(c_ATLEditFileTypes), c_ATLEditFileTypes);
+        if(SUCCEEDED(hr))hr = cpFileDialog->SetFileTypeIndex(c_IndexAll);
+        if(SUCCEEDED(hr))hr = cpFileDialog->SetDefaultExtension(L"xaml");
+        if(SUCCEEDED(hr))hr = cpFileDialog->Show(__nullptr);
+    }
+
+    if(SUCCEEDED(hr))
+    {
+        hr = cpFileDialog->GetResult(cpShellItem.put());
+        if(SUCCEEDED(hr))
+        {
+            hr = cpShellItem->GetDisplayName(SIGDN_FILESYSPATH, &wszFilePath);
+            if(SUCCEEDED(hr))
+            {
+                hr = m_Edit.SaveFile(wszFilePath);
+                if(SUCCEEDED(hr))
+                {
+                    if(!bHandled)
+                    {
+                        SetWindowText(wszFilePath);
+                        m_sFilePath = wszFilePath;
+                        WPARAM wParam = WM_SET_TITLE;
+                        ::SendMessage(m_hwndFrame, WM_PARENTNOTIFY, wParam, (LPARAM)this);
+                    }
+                }
+
+                if(S_OK != hr)
+                {
+                    CStringW sMessage;
+                    sMessage.Format(L"The file\r\n%s\r\ncould not be saved!\r\nHRESULT: 0x%08X", wszFilePath, hr);
+                    ::TaskDialog(__nullptr, __nullptr, __nullptr, __nullptr,
+                        sMessage, TDCBF_YES_BUTTON, TD_WARNING_ICON, __nullptr);
+                }
+
+                ::CoTaskMemFree(wszFilePath);
+            }
+        }
+    }
+    m_Edit.SetFocus();
+    return static_cast<LRESULT>(hr);
 }

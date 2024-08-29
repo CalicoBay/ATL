@@ -16,9 +16,8 @@
 #include <ShObjIdl.h> // for IFileDialogEvents
 #include <commdlg.h>
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
-
-
 #define ATL_NO_ASSERT_ON_DESTROY_NONEXISTENT_WINDOW
+#define WM_SET_TITLE WM_APP
 
 #include "resource.h"
 #include <atlbase.h>

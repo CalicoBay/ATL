@@ -25,12 +25,15 @@ const COMDLG_FILTERSPEC c_ATLEditFileTypes[] =
 {
 	{ L"Text Document (*.txt)", L"*.txt" },
 	{ L"Points Document (*.pts)", L"*.pts" },
+	{ L"XAML Document (*.xaml)", L"*.xaml" },
 	{ L"All Documents (*.*)", L"*.*" }
 };
 
 //Indices of file types 1 based
 const UINT c_IndexText = 1U;
 const UINT c_IndexPoints = 2U;
+const UINT c_IndexXaml = 3U;
+const UINT c_IndexAll = 4U;
 
 typedef union tagByteOrderMark
 {
@@ -1200,19 +1203,25 @@ namespace ATLControls
 			if(IsDirty())
 			{
 				int iResult;
-				if(SUCCEEDED(::TaskDialog(__nullptr, __nullptr, __nullptr, m_sActivePath, L"Do you wish to save your changes?", TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON, TD_WARNING_ICON, &iResult)))
+				if(m_sActivePath.IsEmpty())
+				{
+					m_sActivePath = _T("This never been saved file");
+				}
+				if(SUCCEEDED(::TaskDialog(__nullptr, __nullptr, m_sActivePath, L"is dirty.", L"Do you wish to save your changes?", TDCBF_YES_BUTTON | TDCBF_NO_BUTTON | TDCBF_CANCEL_BUTTON, TD_WARNING_ICON, &iResult)))
 				{
 					if(IDYES == iResult)
 					{
-						if(FAILED(SaveFile()))
+						HRESULT hrSave = SaveFile();
+						if(FAILED(hrSave))
 						{
-							return S_FALSE;
+							return hrSave;
 						}
 					}
 					else if(IDCANCEL == iResult)
 					{
-						return S_FALSE;
+						return HRESULT_FROM_WIN32(ERROR_CANCELLED);//S_FALSE;
 					}
+					//else if(IDNO == iResult) // Carry on
 				}
 			}
 
