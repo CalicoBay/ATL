@@ -7,9 +7,10 @@ public:
     CATLXAMLChild();
     ~CATLXAMLChild();
     HWND					m_hwndFrame;
-    CString					m_sOriginalTitle;
-    CString					m_sContent;
-    CString					m_sStaticContent;
+    CString m_sOriginalTitle;
+    CString	m_sContent;
+    CString	m_sStaticContent;
+    CString m_sFilePath;
     CATLXAMLFrame* m_pMDIFrame;
     RECT m_RectStatic, m_RectEdit;
     HCURSOR m_hSplitCursor;

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ATLXAMLChild.h"
 #include "ATLXAML.h"
+//using namespace ATLControls;
+using namespace winrt;
 
 static short begX = 0;
 static short endX = 0;
@@ -189,8 +191,59 @@ LRESULT CATLXAMLChild::OnFileClose(WORD wHiParam, WORD wLoParam, HWND hwnd, BOOL
 }
 LRESULT CATLXAMLChild::OnFileOpen(WORD, WORD, HWND, BOOL&)
 {
-    MessageBox(_T("OnFileOpen called"));
-    return 0;
+    LRESULT lResult = 0;
+    com_ptr<IFileOpenDialog> cpFileDialog;
+    com_ptr<IShellItem> cpShellItem;
+
+    // CoCreate the dialog object.
+    HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(cpFileDialog.put()));
+    if (SUCCEEDED(hr))
+    {
+        DWORD dwOptions;
+        hr = cpFileDialog->GetOptions(&dwOptions);
+        if (SUCCEEDED(hr))
+        {
+            hr = cpFileDialog->SetOptions(dwOptions | FOS_FORCEFILESYSTEM);
+        }
+        if (SUCCEEDED(hr))
+        {
+            hr = cpFileDialog->Show(NULL);
+        }
+
+        if (SUCCEEDED(hr))
+        {
+            hr = cpFileDialog->GetResult(cpShellItem.put());
+            if (SUCCEEDED(hr))
+            {
+                LPWSTR pwszPath;
+                hr = cpShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pwszPath);
+                if (SUCCEEDED(hr))
+                {
+                    //OpenDocumentFile(pwszPath);
+                    CString csMessage;
+                    //UINT cchTextLimit = m_Edit.GetLimitText();
+                    UINT64 cbTextLimit = m_Edit.GetLimitText();// cchTextLimit;
+                    cbTextLimit = cbTextLimit * sizeof(TCHAR);
+                    csMessage.Format(_T("%s\r\nEdit Box Byte Limit: %I64u"), pwszPath, cbTextLimit);//0x%08I32X
+                    INT_PTR iResult = ::MessageBox(__nullptr, csMessage, _T("To Be Opened!"), MB_YESNO);
+                    if (IDYES == iResult)
+                    {
+                        //This will only be done after succesfully opening a file
+                        if (SUCCEEDED(m_Edit.OpenFile(pwszPath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, OPEN_EXISTING)))
+                        {
+                            m_sFilePath = pwszPath;
+                            SetWindowText(pwszPath);
+                            WPARAM wParam = WM_APP;
+                            ::SendMessage(m_hwndFrame, WM_PARENTNOTIFY, wParam, (LPARAM)this);
+                        }
+                    }
+                    ::CoTaskMemFree(pwszPath);
+                }
+            }
+        }
+    }
+    m_Edit.SetFocus();
+    return lResult;
 }
 LRESULT CATLXAMLChild::OnFileSave(WORD, WORD, HWND, BOOL& bHandled)
 {

@@ -30,7 +30,17 @@
 #include <algorithm>
 #include <functional>
 #include <strsafe.h>
+// Com and WinRT headers
+#include <Unknwn.h>
+#include <winrt/base.h>
 #include "AtlControls.h"
+
+#pragma comment(lib, "shlwapi.lib")
+#pragma comment(lib, "comctl32.lib")
+#pragma comment(lib, "propsys.lib")
+// set up common controls v6 the easy way
+#pragma comment(linker, "\"/manifestdependency:type='Win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
 // retrieve the HINSTANCE for the current DLL or EXE using this symbol that
 // the linker provides for every module, avoids the need for a global HINSTANCE variable
 // and provides access to this value for static libraries
