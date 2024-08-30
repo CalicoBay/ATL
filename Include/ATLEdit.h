@@ -46,6 +46,11 @@ public:
 	HRESULT OpenFile(LPCWSTR wszFilePath, DWORD dwAccess, DWORD dwShare, DWORD dwCreate);
 	HRESULT SaveFile(LPCWSTR wszFilePath = __nullptr);
 	HRESULT Find(LPFINDREPLACE pFindReplace);
+	void LimitText(int nChars = 0)
+	{
+		ATLENSURE(::IsWindow(m_hWnd));
+		::SendMessage(m_hWnd, EM_LIMITTEXT, nChars, 0L);
+	}
 protected:
 	CBomFile m_File;
 	CHeapPtr<char> m_ShadowBuffer;

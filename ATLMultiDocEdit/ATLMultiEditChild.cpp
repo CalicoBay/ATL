@@ -85,6 +85,7 @@ LRESULT CATLMultiEditChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lP
 				else
 				{
 					m_pATLEdit = pATLEdit;
+					m_pATLEdit->LimitText();
 					pATLEdit->OpenFile(m_sOriginalTitle, GENERIC_READ, FILE_SHARE_READ|FILE_SHARE_WRITE, OPEN_EXISTING);
 				}
 			}

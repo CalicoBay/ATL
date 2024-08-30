@@ -57,6 +57,7 @@ LRESULT CATLXAMLChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam,
             HWND hwndEdit = m_Edit.Create(this, 1, m_hWnd, m_RectEdit);//(m_hWnd, m_RectEdit, m_sContent, WS_CHILD | WS_BORDER | WS_VISIBLE | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE);
             if(0 != hwndEdit)
             {
+                m_Edit.LimitText();
                 m_Edit.SetSel(0, 1);
                 m_Edit.ReplaceSel((LPCTSTR)m_sContent);
             }
