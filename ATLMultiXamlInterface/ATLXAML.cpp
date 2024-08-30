@@ -48,6 +48,7 @@ LRESULT CATLXAMLFrame::OnFileNew(WORD, WORD, HWND, BOOL&)
                 }
             }
             pMDIChild->m_Edit.SetFocus();
+            m_bBinHereDoneThat = true;
         }
         else
         {

@@ -15,7 +15,8 @@ public:
         m_hMDIClient(0),
         m_hNoPaneMenu(__nullptr),
         m_hPaneMenu(__nullptr),
-        m_hSplitCursor(__nullptr)
+        m_hSplitCursor(__nullptr),
+        m_bBinHereDoneThat(false)
     {
         (void)m_sUntitled.LoadStringW(IDS_UNTITLED);
     }
@@ -23,6 +24,7 @@ public:
     HMENU m_hPaneMenu;
     HMENU m_hNoPaneMenu;
     HCURSOR m_hSplitCursor;
+    bool m_bBinHereDoneThat;
     CString m_sUntitled;
     std::vector<CATLXAMLChild*> m_vecMDIChildren;
     std::vector<CString> m_vecTitlesToRecycle;

@@ -17,8 +17,8 @@ CATLXAMLChild::CATLXAMLChild(void) :
     ::memset(&m_RectStatic, 0, sizeof(RECT));
     ::memset(&m_RectEdit, 0, sizeof(RECT));
     m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZEWE));
-    m_sContent = _T("<Page xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"\r\n\t\txmlns:x = \"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n\t<Border BorderBrush=\"Red\"\r\n\t\tBorderThickness=\"12\"\r\n\t\tCornerRadius=\"24\"\r\n\t\tBackground=\"Yellow\"\r\n\t\tHorizontalAlignment=\"Center\"\r\n\t\tVerticalAlignment=\"Center\">\r\n\t<TextBlock Text=\"Hello XAML Cruncher!\"\r\n\t\tFontSize=\"48\"\r\n\t\tForeground=\"Blue\"\r\n\t\tMargin=\"24\" />\r\n\t</Border>\r\n</Page>");
-    m_sStaticContent = _T("HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE);");
+    m_sContent = _T("Default file didn't load!");//_T("<Page xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"\r\n\t\txmlns:x = \"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n\t<Border BorderBrush=\"Red\"\r\n\t\tBorderThickness=\"12\"\r\n\t\tCornerRadius=\"24\"\r\n\t\tBackground=\"Yellow\"\r\n\t\tHorizontalAlignment=\"Center\"\r\n\t\tVerticalAlignment=\"Center\">\r\n\t<TextBlock Text=\"Hello XAML Cruncher!\"\r\n\t\tFontSize=\"48\"\r\n\t\tForeground=\"Blue\"\r\n\t\tMargin=\"24\" />\r\n\t</Border>\r\n</Page>");
+    m_sStaticContent = _T("");// _T("HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE);");
 }
 
 
@@ -58,8 +58,15 @@ LRESULT CATLXAMLChild::OnCreate(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM lParam,
             if(0 != hwndEdit)
             {
                 m_Edit.LimitText();
-                m_Edit.SetSel(0, 1);
-                m_Edit.ReplaceSel((LPCTSTR)m_sContent);
+                if(!m_pMDIFrame->m_bBinHereDoneThat)
+                {
+                    HRESULT hr = m_Edit.OpenFile(_T("Cruncher.xaml"), GENERIC_READ, FILE_SHARE_READ/* | FILE_SHARE_WRITE*/, OPEN_EXISTING);
+                    if(FAILED(hr))
+                    {
+                        m_Edit.SetSel(0, 1);
+                        m_Edit.ReplaceSel((LPCTSTR)m_sContent);
+                    }
+                }
             }
         }
     }
@@ -304,7 +311,11 @@ LRESULT CATLXAMLChild::OnFileOpen(WORD, WORD, HWND, BOOL&)
         }
     }
     m_Edit.SetFocus();
-    return static_cast<LRESULT>(hr);
+    if(FAILED(hr))
+    {
+        lResult = 1;
+    }
+    return lResult;
 }
 LRESULT CATLXAMLChild::OnFileSave(WORD, WORD, HWND, BOOL& bHandled)
 {
@@ -329,24 +340,24 @@ LRESULT CATLXAMLChild::OnFileSave(WORD, WORD, HWND, BOOL& bHandled)
 LRESULT CATLXAMLChild::OnFileSaveAs(WORD, WORD, HWND, BOOL& bHandled)
 {
     HRESULT hr;
-    com_ptr<IFileSaveDialog> cpFileDialog;
-    com_ptr<IShellItem> cpShellItem;
+    com_ptr<IFileSaveDialog> com_ptrFileDialog;
+    com_ptr<IShellItem> com_ptrShellItem;
     PWSTR wszFilePath = __nullptr;
-    hr = ::CoCreateInstance(CLSID_FileSaveDialog, __nullptr, CLSCTX_INPROC_SERVER, __uuidof(IFileSaveDialog), cpFileDialog.put_void());
+    hr = ::CoCreateInstance(CLSID_FileSaveDialog, __nullptr, CLSCTX_INPROC_SERVER, __uuidof(IFileSaveDialog), com_ptrFileDialog.put_void());
     if(SUCCEEDED(hr))
     {
-        hr = cpFileDialog->SetFileTypes(ARRAYSIZE(c_ATLEditFileTypes), c_ATLEditFileTypes);
-        if(SUCCEEDED(hr))hr = cpFileDialog->SetFileTypeIndex(c_IndexAll);
-        if(SUCCEEDED(hr))hr = cpFileDialog->SetDefaultExtension(L"xaml");
-        if(SUCCEEDED(hr))hr = cpFileDialog->Show(__nullptr);
+        hr = com_ptrFileDialog->SetFileTypes(ARRAYSIZE(c_ATLEditFileTypes), c_ATLEditFileTypes);
+        if(SUCCEEDED(hr))hr = com_ptrFileDialog->SetFileTypeIndex(c_IndexAll);
+        if(SUCCEEDED(hr))hr = com_ptrFileDialog->SetDefaultExtension(L"xaml");
+        if(SUCCEEDED(hr))hr = com_ptrFileDialog->Show(__nullptr);
     }
 
     if(SUCCEEDED(hr))
     {
-        hr = cpFileDialog->GetResult(cpShellItem.put());
+        hr = com_ptrFileDialog->GetResult(com_ptrShellItem.put());
         if(SUCCEEDED(hr))
         {
-            hr = cpShellItem->GetDisplayName(SIGDN_FILESYSPATH, &wszFilePath);
+            hr = com_ptrShellItem->GetDisplayName(SIGDN_FILESYSPATH, &wszFilePath);
             if(SUCCEEDED(hr))
             {
                 hr = m_Edit.SaveFile(wszFilePath);
