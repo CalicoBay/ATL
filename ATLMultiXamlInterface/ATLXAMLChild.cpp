@@ -10,13 +10,13 @@ static short endX = 0;
 CATLXAMLChild::CATLXAMLChild(void) :
     m_Edit(_T("Edit"), this, 1),
     m_Static(_T("Static"), this, 2),
+    m_RectEdit{},
+    m_RectStatic{},
     m_hwndFrame(0),
     m_pMDIFrame(__nullptr),
     m_hSplitCursor(__nullptr),
     m_hArrowCursor(__nullptr)
 {
-    ::memset(&m_RectStatic, 0, sizeof(RECT));
-    ::memset(&m_RectEdit, 0, sizeof(RECT));
     m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZEWE));
     m_hArrowCursor = ::LoadCursor(__nullptr, IDC_ARROW);
     m_sContent = _T("Default file didn't load!");//_T("<Page xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"\r\n\t\txmlns:x = \"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n\t<Border BorderBrush=\"Red\"\r\n\t\tBorderThickness=\"12\"\r\n\t\tCornerRadius=\"24\"\r\n\t\tBackground=\"Yellow\"\r\n\t\tHorizontalAlignment=\"Center\"\r\n\t\tVerticalAlignment=\"Center\">\r\n\t<TextBlock Text=\"Hello XAML Cruncher!\"\r\n\t\tFontSize=\"48\"\r\n\t\tForeground=\"Blue\"\r\n\t\tMargin=\"24\" />\r\n\t</Border>\r\n</Page>");
