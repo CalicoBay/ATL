@@ -109,9 +109,13 @@ LRESULT CATLXAMLChild::OnPaint(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
     rectToPaint.right = m_RectStatic.left;
     rectToPaint.top = m_RectEdit.top;
     rgnToPaint = ::CreateRectRgnIndirect(&rectToPaint);
-    BeginPaint(&ps);
-    ::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_ACTIVECAPTION));
-    EndPaint(&ps);
+    if(__nullptr != rgnToPaint)
+    {
+        BeginPaint(&ps);
+        ::FillRgn(hdc, rgnToPaint, GetSysColorBrush(COLOR_ACTIVECAPTION));
+        ::DeleteObject(rgnToPaint);
+        EndPaint(&ps);
+    }
 
     return 0;
 }
