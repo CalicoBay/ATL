@@ -292,20 +292,20 @@ LRESULT CATLXAMLChild::OnFileOpen(WORD, WORD, HWND, BOOL&)
                 hr = com_ptrShellItem->GetDisplayName(SIGDN_FILESYSPATH, &pwszPath);
                 if(SUCCEEDED(hr))
                 {
-                    //OpenDocumentFile(pwszPath);
-                    CString csMessage;
-                    //UINT cchTextLimit = m_Edit.GetLimitText();
-                    UINT64 cbTextLimit = m_Edit.GetLimitText();// cchTextLimit;
-                    cbTextLimit = cbTextLimit * sizeof(TCHAR);
-                    csMessage.Format(_T("%s\r\nEdit Box Byte Limit: %I64u"), pwszPath, cbTextLimit);//0x%08I32X
-                    int iResult;
-                    hr = ::TaskDialog(__nullptr, __nullptr, _T("Opening file"), csMessage, _T("Is this what you want?"), TDCBF_YES_BUTTON | TDCBF_NO_BUTTON, TD_INFORMATION_ICON, &iResult);
+                    ////OpenDocumentFile(pwszPath);
+                    //CString csMessage;
+                    ////UINT cchTextLimit = m_Edit.GetLimitText();
+                    //UINT64 cbTextLimit = m_Edit.GetLimitText();// cchTextLimit;
+                    //cbTextLimit = cbTextLimit * sizeof(TCHAR);
+                    //csMessage.Format(_T("%s\r\nEdit Box Byte Limit: %I64u"), pwszPath, cbTextLimit);//0x%08I32X
+                    //hr = ::TaskDialog(__nullptr, __nullptr, _T("Opening file"), csMessage, _T("Is this what you want?"), TDCBF_YES_BUTTON | TDCBF_NO_BUTTON, TD_INFORMATION_ICON, &iResult);
+                    int iResult = IDYES;
                     if(SUCCEEDED(hr))
                     {
                         if(IDYES == iResult)
                         {
-                            //This will only be done after succesfully opening a file
                             hr = m_Edit.OpenFile(pwszPath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, OPEN_EXISTING);
+                            //This will only be done after succesfully opening a file
                             if(SUCCEEDED(hr))
                             {
                                 m_sFilePath = pwszPath;
