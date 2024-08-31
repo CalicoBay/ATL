@@ -12,11 +12,13 @@ CATLXAMLChild::CATLXAMLChild(void) :
     m_Static(_T("Static"), this, 2),
     m_hwndFrame(0),
     m_pMDIFrame(__nullptr),
-    m_hSplitCursor(__nullptr)
+    m_hSplitCursor(__nullptr),
+    m_hArrowCursor(__nullptr)
 {
     ::memset(&m_RectStatic, 0, sizeof(RECT));
     ::memset(&m_RectEdit, 0, sizeof(RECT));
     m_hSplitCursor = ::LoadCursor(__nullptr, MAKEINTRESOURCE(IDC_SIZEWE));
+    m_hArrowCursor = ::LoadCursor(__nullptr, IDC_ARROW);
     m_sContent = _T("Default file didn't load!");//_T("<Page xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"\r\n\t\txmlns:x = \"http://schemas.microsoft.com/winfx/2006/xaml\">\r\n\t<Border BorderBrush=\"Red\"\r\n\t\tBorderThickness=\"12\"\r\n\t\tCornerRadius=\"24\"\r\n\t\tBackground=\"Yellow\"\r\n\t\tHorizontalAlignment=\"Center\"\r\n\t\tVerticalAlignment=\"Center\">\r\n\t<TextBlock Text=\"Hello XAML Cruncher!\"\r\n\t\tFontSize=\"48\"\r\n\t\tForeground=\"Blue\"\r\n\t\tMargin=\"24\" />\r\n\t</Border>\r\n</Page>");
     m_sStaticContent = _T("");// _T("HWND hwndStatic = m_Static.Create(m_hWnd, m_RectStatic, m_sStaticContent, WS_CHILD | WS_BORDER | WS_VISIBLE);");
 }
@@ -103,8 +105,8 @@ LRESULT CATLXAMLChild::OnPaint(UINT /*nMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
     RECT rectToPaint;
     HRGN rgnToPaint;
     rectToPaint.bottom = m_RectStatic.bottom;
-    rectToPaint.left = m_RectStatic.right;
-    rectToPaint.right = m_RectEdit.left;
+    rectToPaint.left = m_RectEdit.right;
+    rectToPaint.right = m_RectStatic.left;
     rectToPaint.top = m_RectEdit.top;
     rgnToPaint = ::CreateRectRgnIndirect(&rectToPaint);
     BeginPaint(&ps);
@@ -122,7 +124,7 @@ LRESULT CATLXAMLChild::OnSize(UINT, WPARAM, LPARAM, BOOL&)
     m_RectEdit.bottom = m_RectStatic.bottom = rcClient.bottom;
     if(rcClient.right > (m_RectEdit.right + 150))
     {
-        m_RectStatic.right = rcClient.right;
+    m_RectStatic.right = rcClient.right;
     }
     else
     {
@@ -152,17 +154,20 @@ LRESULT CATLXAMLChild::OnMouseMove(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, 
     //   //tme.hwndTrack = m_hWnd;
     //   //::SetCursor(m_hSplitCursor);
     //}
-    ::SetCursor(m_hSplitCursor);
+    if(MK_LBUTTON & wParam)
+    {
+        ::SetCursor(m_hSplitCursor);
+    }
     return lResult;
 }
 
 LRESULT CATLXAMLChild::OnLButtonDown(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-    RECT rcClient;
-    GetWindowRect(&rcClient);
-    rcClient.left += 100;
-    rcClient.right -= 150;
-    ::ClipCursor(&rcClient);
+    RECT rcClip;
+    GetWindowRect(&rcClip);
+    rcClip.left += 100;
+    rcClip.right -= 150;
+    ::ClipCursor(&rcClip);
     begX = GET_X_LPARAM(lParam);
     ::SetCursor(m_hSplitCursor);
     ::SetCapture(m_hWnd);
@@ -179,6 +184,7 @@ LRESULT CATLXAMLChild::OnLButtonUp(UINT /*nMsg*/, WPARAM wParam, LPARAM lParam, 
     m_Edit.SetWindowPos(HWND_TOP, &m_RectEdit, 0);
     ::ClipCursor(NULL);
     ::ReleaseCapture();
+    ::SetCursor(m_hArrowCursor);
     return 0;
 }
 
