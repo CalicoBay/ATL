@@ -58,5 +58,6 @@ Other notes:
 
 AppWizard uses "TODO:" comments to indicate parts of the source code you
 should add to or customize.
-
+This is a bare bones project, you can type but not save.
+This is copied from the ATLSingleDocEdit window. Consider it now saved.
 /////////////////////////////////////////////////////////////////////////////
