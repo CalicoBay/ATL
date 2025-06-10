@@ -281,7 +281,7 @@ STDMETHODIMP EditableLayout::RemoveTextAt(
 
    if(SUCCEEDED(hr))
    {
-      RecreateLayout(currentLayout, text);
+      hr = RecreateLayout(currentLayout, text);
    }
 
    IDWriteTextLayout* newLayout = currentLayout;
